@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		056977F620443701DAD02568 /* Pods_ScreenShareApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B8F8041642432B286EA9C33 /* Pods_ScreenShareApp.framework */; };
+		06F4EC072F863F8800921DFC /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06F4EC062F863F8800921DFC /* ReplayKit.framework */; };
+		06F4EC0E2F863F8800921DFC /* ScreenShareExt.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 06F4EC042F863F8800921DFC /* ScreenShareExt.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		761721C9D502E35EB979488C /* Pods_ScreenShareExt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1E6D21CCCF1F34D0EC9E3C4 /* Pods_ScreenShareExt.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		06F4EBE42F863EE100921DFC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,15 +28,69 @@
 			remoteGlobalIDString = 06F4EBD22F863EE000921DFC;
 			remoteInfo = ScreenShareApp;
 		};
+		06F4EC0C2F863F8800921DFC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 06F4EBCB2F863EE000921DFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 06F4EC032F863F8800921DFC;
+			remoteInfo = ScreenShareExt;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		061A348B2F8643830021144A /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed ExtensionKit Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		06F4EC132F863F8800921DFC /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				06F4EC0E2F863F8800921DFC /* ScreenShareExt.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		06F4EBD32F863EE000921DFC /* ScreenShareApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScreenShareApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06F4EBE32F863EE100921DFC /* ScreenShareAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenShareAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		06F4EBED2F863EE100921DFC /* ScreenShareAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenShareAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		06F4EC042F863F8800921DFC /* ScreenShareExt.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ScreenShareExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		06F4EC062F863F8800921DFC /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
+		1DF1B70B6B301615CB4E3321 /* Pods-ScreenShareExt.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScreenShareExt.release.xcconfig"; path = "Target Support Files/Pods-ScreenShareExt/Pods-ScreenShareExt.release.xcconfig"; sourceTree = "<group>"; };
+		69F00F2E71FC430FE4A1EAED /* Pods-ScreenShareExt.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScreenShareExt.debug.xcconfig"; path = "Target Support Files/Pods-ScreenShareExt/Pods-ScreenShareExt.debug.xcconfig"; sourceTree = "<group>"; };
+		7B8F8041642432B286EA9C33 /* Pods_ScreenShareApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ScreenShareApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		82E898E6EB33F4FD6545685D /* Pods-ScreenShareApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScreenShareApp.release.xcconfig"; path = "Target Support Files/Pods-ScreenShareApp/Pods-ScreenShareApp.release.xcconfig"; sourceTree = "<group>"; };
+		B708CB415EBF7B6E8D8BD2D1 /* Pods-ScreenShareApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScreenShareApp.debug.xcconfig"; path = "Target Support Files/Pods-ScreenShareApp/Pods-ScreenShareApp.debug.xcconfig"; sourceTree = "<group>"; };
+		C1E6D21CCCF1F34D0EC9E3C4 /* Pods_ScreenShareExt.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ScreenShareExt.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		06F4EC0F2F863F8800921DFC /* Exceptions for "ScreenShareExt" folder in "ScreenShareExt" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 06F4EC032F863F8800921DFC /* ScreenShareExt */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		061A347F2F8643830021144A /* test */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = test;
+			sourceTree = "<group>";
+		};
 		06F4EBD52F863EE000921DFC /* ScreenShareApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ScreenShareApp;
@@ -45,6 +106,14 @@
 			path = ScreenShareAppUITests;
 			sourceTree = "<group>";
 		};
+		06F4EC082F863F8800921DFC /* ScreenShareExt */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				06F4EC0F2F863F8800921DFC /* Exceptions for "ScreenShareExt" folder in "ScreenShareExt" target */,
+			);
+			path = ScreenShareExt;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +121,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				056977F620443701DAD02568 /* Pods_ScreenShareApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,6 +139,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		06F4EC012F863F8800921DFC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				06F4EC072F863F8800921DFC /* ReplayKit.framework in Frameworks */,
+				761721C9D502E35EB979488C /* Pods_ScreenShareExt.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -78,7 +157,11 @@
 				06F4EBD52F863EE000921DFC /* ScreenShareApp */,
 				06F4EBE62F863EE100921DFC /* ScreenShareAppTests */,
 				06F4EBF02F863EE100921DFC /* ScreenShareAppUITests */,
+				06F4EC082F863F8800921DFC /* ScreenShareExt */,
+				061A347F2F8643830021144A /* test */,
+				06F4EC052F863F8800921DFC /* Frameworks */,
 				06F4EBD42F863EE000921DFC /* Products */,
+				D3F316BCC1E4A9475756E3F2 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -88,8 +171,30 @@
 				06F4EBD32F863EE000921DFC /* ScreenShareApp.app */,
 				06F4EBE32F863EE100921DFC /* ScreenShareAppTests.xctest */,
 				06F4EBED2F863EE100921DFC /* ScreenShareAppUITests.xctest */,
+				06F4EC042F863F8800921DFC /* ScreenShareExt.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		06F4EC052F863F8800921DFC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				06F4EC062F863F8800921DFC /* ReplayKit.framework */,
+				7B8F8041642432B286EA9C33 /* Pods_ScreenShareApp.framework */,
+				C1E6D21CCCF1F34D0EC9E3C4 /* Pods_ScreenShareExt.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D3F316BCC1E4A9475756E3F2 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				B708CB415EBF7B6E8D8BD2D1 /* Pods-ScreenShareApp.debug.xcconfig */,
+				82E898E6EB33F4FD6545685D /* Pods-ScreenShareApp.release.xcconfig */,
+				69F00F2E71FC430FE4A1EAED /* Pods-ScreenShareExt.debug.xcconfig */,
+				1DF1B70B6B301615CB4E3321 /* Pods-ScreenShareExt.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -99,20 +204,23 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 06F4EBF72F863EE100921DFC /* Build configuration list for PBXNativeTarget "ScreenShareApp" */;
 			buildPhases = (
+				EEBDF82349ED12C29017D7DE /* [CP] Check Pods Manifest.lock */,
 				06F4EBCF2F863EE000921DFC /* Sources */,
 				06F4EBD02F863EE000921DFC /* Frameworks */,
 				06F4EBD12F863EE000921DFC /* Resources */,
+				06F4EC132F863F8800921DFC /* Embed Foundation Extensions */,
+				061A348B2F8643830021144A /* Embed ExtensionKit Extensions */,
+				181266BE4B40E2475C5CF98E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				06F4EC0D2F863F8800921DFC /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				06F4EBD52F863EE000921DFC /* ScreenShareApp */,
 			);
 			name = ScreenShareApp;
-			packageProductDependencies = (
-			);
 			productName = ScreenShareApp;
 			productReference = 06F4EBD32F863EE000921DFC /* ScreenShareApp.app */;
 			productType = "com.apple.product-type.application";
@@ -134,8 +242,6 @@
 				06F4EBE62F863EE100921DFC /* ScreenShareAppTests */,
 			);
 			name = ScreenShareAppTests;
-			packageProductDependencies = (
-			);
 			productName = ScreenShareAppTests;
 			productReference = 06F4EBE32F863EE100921DFC /* ScreenShareAppTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -157,11 +263,30 @@
 				06F4EBF02F863EE100921DFC /* ScreenShareAppUITests */,
 			);
 			name = ScreenShareAppUITests;
-			packageProductDependencies = (
-			);
 			productName = ScreenShareAppUITests;
 			productReference = 06F4EBED2F863EE100921DFC /* ScreenShareAppUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		06F4EC032F863F8800921DFC /* ScreenShareExt */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 06F4EC102F863F8800921DFC /* Build configuration list for PBXNativeTarget "ScreenShareExt" */;
+			buildPhases = (
+				6CAAEE95699CEAF3805B4733 /* [CP] Check Pods Manifest.lock */,
+				06F4EC002F863F8800921DFC /* Sources */,
+				06F4EC012F863F8800921DFC /* Frameworks */,
+				06F4EC022F863F8800921DFC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				06F4EC082F863F8800921DFC /* ScreenShareExt */,
+			);
+			name = ScreenShareExt;
+			productName = ScreenShareExt;
+			productReference = 06F4EC042F863F8800921DFC /* ScreenShareExt.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -184,6 +309,10 @@
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = 06F4EBD22F863EE000921DFC;
 					};
+					06F4EC032F863F8800921DFC = {
+						CreatedOnToolsVersion = 16.2;
+						LastSwiftMigration = 1620;
+					};
 				};
 			};
 			buildConfigurationList = 06F4EBCE2F863EE000921DFC /* Build configuration list for PBXProject "ScreenShareApp" */;
@@ -203,6 +332,7 @@
 				06F4EBD22F863EE000921DFC /* ScreenShareApp */,
 				06F4EBE22F863EE100921DFC /* ScreenShareAppTests */,
 				06F4EBEC2F863EE100921DFC /* ScreenShareAppUITests */,
+				06F4EC032F863F8800921DFC /* ScreenShareExt */,
 			);
 		};
 /* End PBXProject section */
@@ -229,7 +359,78 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		06F4EC022F863F8800921DFC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		181266BE4B40E2475C5CF98E /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ScreenShareApp/Pods-ScreenShareApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ScreenShareApp/Pods-ScreenShareApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ScreenShareApp/Pods-ScreenShareApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6CAAEE95699CEAF3805B4733 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ScreenShareExt-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EEBDF82349ED12C29017D7DE /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ScreenShareApp-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		06F4EBCF2F863EE000921DFC /* Sources */ = {
@@ -253,6 +454,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		06F4EC002F863F8800921DFC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -265,6 +473,11 @@
 			isa = PBXTargetDependency;
 			target = 06F4EBD22F863EE000921DFC /* ScreenShareApp */;
 			targetProxy = 06F4EBEE2F863EE100921DFC /* PBXContainerItemProxy */;
+		};
+		06F4EC0D2F863F8800921DFC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 06F4EC032F863F8800921DFC /* ScreenShareExt */;
+			targetProxy = 06F4EC0C2F863F8800921DFC /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -306,7 +519,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -321,7 +534,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -369,7 +582,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -378,7 +591,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -390,9 +603,11 @@
 		};
 		06F4EBF82F863EE100921DFC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B708CB415EBF7B6E8D8BD2D1 /* Pods-ScreenShareApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ScreenShareApp/ScreenShareApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ScreenShareApp/Preview Content\"";
@@ -419,9 +634,11 @@
 		};
 		06F4EBF92F863EE100921DFC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 82E898E6EB33F4FD6545685D /* Pods-ScreenShareApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ScreenShareApp/ScreenShareApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ScreenShareApp/Preview Content\"";
@@ -518,6 +735,65 @@
 			};
 			name = Release;
 		};
+		06F4EC112F863F8800921DFC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 69F00F2E71FC430FE4A1EAED /* Pods-ScreenShareExt.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = ScreenShareExt/ScreenShareExt.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9YG8P8HX3K;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScreenShareExt/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ScreenShareExt;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.will115.ScreenShareApp.ScreenShareExt;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "ScreenShareExt/ScreenShareExt-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		06F4EC122F863F8800921DFC /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1DF1B70B6B301615CB4E3321 /* Pods-ScreenShareExt.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = ScreenShareExt/ScreenShareExt.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9YG8P8HX3K;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScreenShareExt/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ScreenShareExt;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.will115.ScreenShareApp.ScreenShareExt;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "ScreenShareExt/ScreenShareExt-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -553,6 +829,15 @@
 			buildConfigurations = (
 				06F4EBFE2F863EE100921DFC /* Debug */,
 				06F4EBFF2F863EE100921DFC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		06F4EC102F863F8800921DFC /* Build configuration list for PBXNativeTarget "ScreenShareExt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				06F4EC112F863F8800921DFC /* Debug */,
+				06F4EC122F863F8800921DFC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
