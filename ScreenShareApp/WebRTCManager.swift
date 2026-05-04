@@ -21,8 +21,8 @@ class WebRTCManager: NSObject {
         self.socket = socket
         RTCInitializeSSL()
         
-        // let videoEncoderFactory = RTCDefaultVideoEncoderFactory()
-        let videoEncoderFactory = RTCEncoderFactory()
+        let videoEncoderFactory = RTCDefaultVideoEncoderFactory()
+        // let videoEncoderFactory = KAUEncoderFactory()
         let videoDecoderFactory = RTCDefaultVideoDecoderFactory()
         self.factory = RTCPeerConnectionFactory(
             encoderFactory: videoEncoderFactory,
@@ -93,6 +93,15 @@ class WebRTCManager: NSObject {
         let rtcPixelBuffer = RTCCVPixelBuffer(pixelBuffer: pixelBuffer)
         let timeStampNs = Int64(CMTimeGetSeconds(CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) * 1_000_000_000)
         
+        let videoFrame = RTCVideoFrame(buffer: rtcPixelBuffer, rotation: ._0, timeStampNs: timeStampNs)
+        
+        if let capturer = self.videoCapturer {
+            self.videoSource.capturer(capturer, didCapture: videoFrame)
+        }
+    }
+    
+    func sendPixelBuffer(_ pixelBuffer: CVPixelBuffer, timeStampNs: Int64) {
+        let rtcPixelBuffer = RTCCVPixelBuffer(pixelBuffer: pixelBuffer)
         let videoFrame = RTCVideoFrame(buffer: rtcPixelBuffer, rotation: ._0, timeStampNs: timeStampNs)
         
         if let capturer = self.videoCapturer {

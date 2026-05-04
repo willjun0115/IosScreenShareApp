@@ -8,7 +8,7 @@
 import Foundation
 import WebRTC
 
-class RTCEncoderFactory: NSObject, RTCVideoEncoderFactory {
+class KAUEncoderFactory: NSObject, RTCVideoEncoderFactory {
     private let defaultFactory = RTCDefaultVideoEncoderFactory()
     
     func supportedCodecs() -> [RTCVideoCodecInfo] {

@@ -76,6 +76,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		068863532FA8CBF300436D3A /* Exceptions for "ScreenShareApp" folder in "ScreenShareExt" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				SharedContext.swift,
+			);
+			target = 06F4EC032F863F8800921DFC /* ScreenShareExt */;
+		};
+		0688635F2FA8E2EB00436D3A /* Exceptions for "ScreenShareApp" folder in "ScreenShareApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 06F4EBD22F863EE000921DFC /* ScreenShareApp */;
+		};
 		06F4EC0F2F863F8800921DFC /* Exceptions for "ScreenShareExt" folder in "ScreenShareExt" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -93,6 +107,10 @@
 		};
 		06F4EBD52F863EE000921DFC /* ScreenShareApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				0688635F2FA8E2EB00436D3A /* Exceptions for "ScreenShareApp" folder in "ScreenShareApp" target */,
+				068863532FA8CBF300436D3A /* Exceptions for "ScreenShareApp" folder in "ScreenShareExt" target */,
+			);
 			path = ScreenShareApp;
 			sourceTree = "<group>";
 		};
@@ -614,6 +632,7 @@
 				DEVELOPMENT_TEAM = 9YG8P8HX3K;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScreenShareApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -645,6 +664,7 @@
 				DEVELOPMENT_TEAM = 9YG8P8HX3K;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScreenShareApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -758,7 +778,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "ScreenShareExt/ScreenShareExt-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -788,7 +807,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "ScreenShareExt/ScreenShareExt-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
