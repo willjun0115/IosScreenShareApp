@@ -18,7 +18,7 @@ class SampleHandler: RPBroadcastSampleHandler {
         let sharedSettings = UserDefaults(suiteName: "group.com.will115.screenshare")
         let roomID = sharedSettings?.string(forKey: "broadcastRoomID") ?? "testRoom"
         
-        let serverURL = URL(string: "https://192.168.1.62:8000")!
+        let serverURL = URL(string: "https://192.168.0.26:8000")!
         socketManager = SocketManager(socketURL: serverURL, config: [
             .log(false),
             .forceWebsockets(true),
@@ -82,13 +82,15 @@ class SampleHandler: RPBroadcastSampleHandler {
     }
     
     override func processSampleBuffer(_ sampleBuffer: CMSampleBuffer, with sampleBufferType: RPSampleBufferType) {
-        switch sampleBufferType {
-        case RPSampleBufferType.video:
-            rtcManager?.sendVideoBuffer(sampleBuffer)
-        case RPSampleBufferType.audioApp, RPSampleBufferType.audioMic:
-            break
-        @unknown default:
-            break
+        autoreleasepool{
+            switch sampleBufferType {
+            case RPSampleBufferType.video:
+                rtcManager?.sendVideoBuffer(sampleBuffer)
+            case RPSampleBufferType.audioApp, RPSampleBufferType.audioMic:
+                break
+            @unknown default:
+                break
+            }
         }
     }
 }

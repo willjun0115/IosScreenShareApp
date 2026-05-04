@@ -11,7 +11,7 @@ import SocketIO
 class WebRTCManager: NSObject {
     var myId: String = ""
     private var factory: RTCPeerConnectionFactory
-    private var peerConnections: [String: RTCPeerConnection] = [:] // 딕셔너리로 다중 관리
+    private var peerConnections: [String: RTCPeerConnection] = [:]
     private var videoSource: RTCVideoSource
     private var videoTrack: RTCVideoTrack
     private var socket: SocketIOClient
@@ -21,11 +21,16 @@ class WebRTCManager: NSObject {
         self.socket = socket
         RTCInitializeSSL()
         
-        let videoEncoderFactory = RTCDefaultVideoEncoderFactory()
+        // let videoEncoderFactory = RTCDefaultVideoEncoderFactory()
+        let videoEncoderFactory = RTCEncoderFactory()
         let videoDecoderFactory = RTCDefaultVideoDecoderFactory()
-        self.factory = RTCPeerConnectionFactory(encoderFactory: videoEncoderFactory, decoderFactory: videoDecoderFactory)
+        self.factory = RTCPeerConnectionFactory(
+            encoderFactory: videoEncoderFactory,
+            decoderFactory: videoDecoderFactory
+        )
         
         self.videoSource = factory.videoSource()
+        self.videoSource.adaptOutputFormat(toWidth: 720, height: 1280, fps: 15)
         self.videoCapturer = RTCVideoCapturer(delegate: self.videoSource)
         self.videoTrack = factory.videoTrack(with: videoSource, trackId: "video0")
         super.init()
@@ -90,8 +95,6 @@ class WebRTCManager: NSObject {
         
         let videoFrame = RTCVideoFrame(buffer: rtcPixelBuffer, rotation: ._0, timeStampNs: timeStampNs)
         
-        // 아이폰 발열 방지를 위해 해상도 제한 (필요시 조정)
-        self.videoSource.adaptOutputFormat(toWidth: 720, height: 1280, fps: 30)
         if let capturer = self.videoCapturer {
             self.videoSource.capturer(capturer, didCapture: videoFrame)
         }
@@ -101,7 +104,6 @@ class WebRTCManager: NSObject {
 // MARK: - RTCPeerConnectionDelegate
 extension WebRTCManager: RTCPeerConnectionDelegate {
     func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
-        // 이 PC가 어느 뷰어(peerId)의 것인지 찾기
         guard let peerId = peerConnections.first(where: { $0.value == peerConnection })?.key else { return }
         
         let candidateDict: [String: Any] = [
