@@ -2,33 +2,56 @@
 //  RTCEncoderFactory.swift
 //  ScreenShareApp
 //
-//  Created by supercoder on 4/23/26.
 //
-
 import Foundation
 import WebRTC
 
 class KAUEncoderFactory: NSObject, RTCVideoEncoderFactory {
     private let defaultFactory = RTCDefaultVideoEncoderFactory()
-    
-    func supportedCodecs() -> [RTCVideoCodecInfo] {
+    private var filteredCodecs: [RTCVideoCodecInfo] = []
+
+    override init() {
+        super.init()
+        // 지원하는 전체 코덱 목록 수집
         let allCodecs = defaultFactory.supportedCodecs()
         
-        // 대소문자 구분 없이 "h264"가 포함된 모든 코덱을 찾습니다.
-        let h264Codecs = allCodecs.filter {
-            $0.name.localizedCaseInsensitiveContains("h264")
+        NSLog("📡 [KAUEncoderFactory] 지원 코덱 목록 (총 \(allCodecs.count)개)")
+        for (index, codec) in allCodecs.enumerated() {
+            var paramString = ""
+            for (key, value) in codec.parameters {
+                paramString += "[\(key): \(value)] "
+            }
+            NSLog("   \(index + 1). \(codec.name) | 파라미터: \(paramString.isEmpty ? "없음" : paramString)")
         }
+                
+        // H.264 코덱 필터링
+        self.filteredCodecs = allCodecs.filter { $0.name.lowercased() == "h264" }
         
-        // 만약 필터링 결과가 비어있다면, 전체 목록을 반환
-        if h264Codecs.isEmpty {
-            return allCodecs
+        // H.264 필터링 결과가 빈 배열일 경우 전체 코덱 목록 반환
+        if self.filteredCodecs.isEmpty {
+            NSLog("⚠️ [KAUEncoderFactory] H.264 코덱을 찾을 수 없습니다.")
+            self.filteredCodecs = allCodecs
         }
-        
-        // h264가 발견되었다면, 필터링한 결과를 반환
-        return h264Codecs
+    }
+
+    func supportedCodecs() -> [RTCVideoCodecInfo] {
+        let allCodecs = defaultFactory.supportedCodecs()
+        // return allCodecs
+        return filteredCodecs
     }
     
     func createEncoder(_ info: RTCVideoCodecInfo) -> RTCVideoEncoder? {
-        return defaultFactory.createEncoder(info)
+        let codecName = info.name.lowercased()
+                
+        // H.264 요청 시 프록시(멀티플렉서) 인코더 반환
+        if codecName.contains("h264") {
+            KAUMasterEncoder.shared.setupMaster(info: info)
+            return KAUProxyEncoder()
+        }
+        // 그 외 코덱 요청 시 WebRTC 기본 인코더 반환
+        else {
+            NSLog("webRTC default encoder 생성됨.")
+            return defaultFactory.createEncoder(info)
+        }
     }
 }

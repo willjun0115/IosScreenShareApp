@@ -2,8 +2,6 @@
 //  WebRTCManager.swift
 //  ScreenShareApp
 //
-//  Created by supercoder on 4/8/26.
-//
 
 import WebRTC
 import SocketIO
@@ -16,14 +14,21 @@ class WebRTCManager: NSObject {
     private var videoTrack: RTCVideoTrack
     private var socket: SocketIOClient
     private var videoCapturer: RTCVideoCapturer?
+    var onRemoteVideoTrackReceived: ((RTCVideoTrack) -> Void)?
     
     init(socket: SocketIOClient) {
         self.socket = socket
         RTCInitializeSSL()
         
-        let videoEncoderFactory = RTCDefaultVideoEncoderFactory()
-        // let videoEncoderFactory = KAUEncoderFactory()
+        // let videoEncoderFactory = RTCDefaultVideoEncoderFactory()
+        let videoEncoderFactory = KAUEncoderFactory()
         let videoDecoderFactory = RTCDefaultVideoDecoderFactory()
+
+        let info = videoEncoderFactory.supportedCodecs()
+        if let first = info.first {
+            let _ = videoEncoderFactory.createEncoder(first)
+        }
+        
         self.factory = RTCPeerConnectionFactory(
             encoderFactory: videoEncoderFactory,
             decoderFactory: videoDecoderFactory
@@ -57,17 +62,80 @@ class WebRTCManager: NSObject {
             
             newPc?.answer(for: constraints) { (answerSdp, answerError) in
                 guard let answerSdp = answerSdp else { return }
-                newPc?.setLocalDescription(answerSdp) { _ in
+                
+                // answer sdp 코덱 우선순위 편집
+                let modifiedSdpString = self?.preferCodec(in: answerSdp.sdp, codecName: "H264") ?? answerSdp.sdp
+                let modifiedSdp = RTCSessionDescription(type: answerSdp.type, sdp: modifiedSdpString)
+                
+                newPc?.setLocalDescription(modifiedSdp) { _ in
                     
                     let payload: [String: Any] = [
                         "to": peerId,
                         "data": [
                             "type": "answer",
-                            "sdp": answerSdp.sdp
+                            "sdp": modifiedSdp.sdp
                         ]
                     ]
                     self?.socket.emit("answer", payload)
                 }
+            }
+        }
+    }
+    
+    func createReceiverConnection(to parentId: String) {
+        let config = RTCConfiguration()
+        config.iceServers = [RTCIceServer(urlStrings: ["stun:stun.l.google.com:19302"])]
+        config.sdpSemantics = .unifiedPlan
+        
+        // 수신 전용(recvonly) 제약 조건
+        let constraints = RTCMediaConstraints(
+            mandatoryConstraints: [
+                kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueTrue,
+                kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue
+            ],
+            optionalConstraints: nil
+        )
+        
+        let newPc = factory.peerConnection(with: config, constraints: constraints, delegate: self)
+        
+        // 트랜시버를 수신 전용으로 설정
+        newPc.addTransceiver(of: .video).setDirection(.recvOnly, error: nil)
+        newPc.addTransceiver(of: .audio).setDirection(.recvOnly, error: nil)
+        
+        self.peerConnections[parentId] = newPc
+        
+        newPc.offer(for: constraints) { [weak self, weak newPc] (sdp, error) in
+            guard let sdp = sdp else {
+                NSLog("❌ Offer 생성 실패: \(String(describing: error))")
+                return
+            }
+            
+            // sdp 코덱 우선순위 편집
+            let modifiedSdpString = self?.preferCodec(in: sdp.sdp, codecName: "H264") ?? sdp.sdp
+            let modifiedSdp = RTCSessionDescription(type: sdp.type, sdp: modifiedSdpString)
+            
+            newPc?.setLocalDescription(modifiedSdp) { _ in
+                let payload: [String: Any] = [
+                    "to": parentId,
+                    "data": [
+                        "type": "offer",
+                        "sdp": modifiedSdp.sdp
+                    ]
+                ]
+                self?.socket.emit("offer", payload)
+            }
+        }
+    }
+    
+    func handleAnswer(from peerId: String, sdp: String) {
+        guard let pc = peerConnections[peerId] else { return }
+        let remoteSdp = RTCSessionDescription(type: .answer, sdp: sdp)
+        
+        pc.setRemoteDescription(remoteSdp) { error in
+            if let error = error {
+                NSLog("❌ [\(peerId)] Remote Description Answer 에러: \(error)")
+            } else {
+                NSLog("✅ [\(peerId)] Answer 설정 완료 (시청 파이프라인 개통)")
             }
         }
     }
@@ -110,6 +178,56 @@ class WebRTCManager: NSObject {
     }
 }
 
+extension WebRTCManager {
+    private func preferCodec(in sdp: String, codecName: String) -> String {
+        var lines = sdp.components(separatedBy: "\r\n")
+        var mLineIndex: Int? = nil
+        var targetPayloadTypes: [String] = []
+        
+        // 1. m=video 라인을 찾고, a=rtpmap 라인에서 타겟 코덱의 페이로드 타입을 수집
+        for (index, line) in lines.enumerated() {
+            if line.hasPrefix("m=video") {
+                mLineIndex = index
+            } else if line.hasPrefix("a=rtpmap:"), line.lowercased().contains(codecName.lowercased()) {
+                let parts = line.components(separatedBy: " ")
+                if let pt = parts.first?.components(separatedBy: ":").last {
+                    targetPayloadTypes.append(pt)
+                }
+            }
+        }
+        
+        // 2. 비디오 라인이 없거나 해당 코덱이 sdp에 아예 없다면 원본 반환
+        guard let mLineIdx = mLineIndex, !targetPayloadTypes.isEmpty else {
+            return sdp
+        }
+        
+        var mLineParts = lines[mLineIdx].components(separatedBy: " ")
+        guard mLineParts.count > 3 else { return sdp }
+        
+        let coreParts = Array(mLineParts[0..<3])
+        let payloadTypes = Array(mLineParts[3...])
+        
+        // 3. 페이로드 타입 순서 재배치 (타겟 코덱을 앞으로)
+        var preferredPayloadTypes: [String] = []
+        var otherPayloadTypes: [String] = []
+        
+        for pt in payloadTypes {
+            if targetPayloadTypes.contains(pt) {
+                preferredPayloadTypes.append(pt)
+            } else {
+                otherPayloadTypes.append(pt)
+            }
+        }
+        
+        // 재구성된 m=video 라인 덮어쓰기
+        let newMLine = (coreParts + preferredPayloadTypes + otherPayloadTypes).joined(separator: " ")
+        lines[mLineIdx] = newMLine
+        
+        NSLog("⚙️ [WebRTC] SDP Munging 완료: \(codecName) 우선순위 적용")
+        return lines.joined(separator: "\r\n")
+    }
+}
+
 // MARK: - RTCPeerConnectionDelegate
 extension WebRTCManager: RTCPeerConnectionDelegate {
     func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
@@ -135,15 +253,29 @@ extension WebRTCManager: RTCPeerConnectionDelegate {
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
         // 연결이 완전히 끊기면 메모리(딕셔너리)에서 정리
         if newState == .disconnected || newState == .failed || newState == .closed {
-            if let peerId = peerConnections.first(where: { $0.value == peerConnection })?.key {
-                peerConnections.removeValue(forKey: peerId)
-                NSLog("⚠️ [\(peerId)] 연결 종료됨. PC 정리 완료.")
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                
+                if let peerId = self.peerConnections.first(where: { $0.value == peerConnection })?.key {
+                    peerConnection.close()
+                    self.peerConnections.removeValue(forKey: peerId)
+                    NSLog("⚠️ [\(peerId)] 연결 종료됨. 메인 스레드에서 PC 정리 완료.")
+                }
             }
         }
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange stateChanged: RTCSignalingState) {}
-    func peerConnection(_ peerConnection: RTCPeerConnection, didAdd stream: RTCMediaStream) {}
+    
+    func peerConnection(_ peerConnection: RTCPeerConnection, didAdd stream: RTCMediaStream) {
+        NSLog("✅ [WebRTC] 원격 스트림 수신됨: \(stream.streamId)")
+        if let videoTrack = stream.videoTracks.first {
+            DispatchQueue.main.async { [weak self] in
+                self?.onRemoteVideoTrackReceived?(videoTrack)
+            }
+        }
+    }
+    
     func peerConnection(_ peerConnection: RTCPeerConnection, didRemove stream: RTCMediaStream) {}
     func peerConnectionShouldNegotiate(_ peerConnection: RTCPeerConnection) {}
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceGatheringState) {}

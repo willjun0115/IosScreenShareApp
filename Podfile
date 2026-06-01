@@ -13,7 +13,6 @@ end
 
 target 'ScreenShareExt' do
   use_frameworks!
-  shared_pods
 end
 
 post_install do |installer|
