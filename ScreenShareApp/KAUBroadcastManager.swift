@@ -87,7 +87,14 @@ class KAUBroadcastManager: ObservableObject {
         socket?.on("new-parent") { [weak self] data, _ in
             if let parentId = data[0] as? String {
                 NSLog("✅ [Signaling] 새 부모 할당됨: \(parentId). 시청용 Offer 전송...")
-                self?.rtcManager?.createReceiverConnection(to: parentId)
+                // self?.rtcManager?.createReceiverConnection(to: parentId)
+            }
+        }
+        
+        socket?.on("new-child") { [weak self] data, _ in
+            if let childId = data[0] as? String {
+                NSLog("✅ [Signaling] 새 시청자 접속: \(childId). 시청자에게 Offer 전송 시작...")
+                self?.rtcManager?.createSenderConnection(to: childId)
             }
         }
 

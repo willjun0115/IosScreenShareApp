@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		056977F620443701DAD02568 /* Pods_ScreenShareApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B8F8041642432B286EA9C33 /* Pods_ScreenShareApp.framework */; };
 		06F4EC072F863F8800921DFC /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06F4EC062F863F8800921DFC /* ReplayKit.framework */; };
 		06F4EC0E2F863F8800921DFC /* ScreenShareExt.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 06F4EC042F863F8800921DFC /* ScreenShareExt.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		761721C9D502E35EB979488C /* Pods_ScreenShareExt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1E6D21CCCF1F34D0EC9E3C4 /* Pods_ScreenShareExt.framework */; };
+		18B1799B13B3587A09320A24 /* Pods_ScreenShareExt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7BD3366B2208021348C6A29 /* Pods_ScreenShareExt.framework */; };
+		BBB645431090C0B6B9D67BBC /* Pods_ScreenShareApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11BB08FBF5366BADD8963F8C /* Pods_ScreenShareApp.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,12 +67,12 @@
 		06F4EBED2F863EE100921DFC /* ScreenShareAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenShareAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		06F4EC042F863F8800921DFC /* ScreenShareExt.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ScreenShareExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		06F4EC062F863F8800921DFC /* ReplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReplayKit.framework; path = System/Library/Frameworks/ReplayKit.framework; sourceTree = SDKROOT; };
-		1DF1B70B6B301615CB4E3321 /* Pods-ScreenShareExt.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScreenShareExt.release.xcconfig"; path = "Target Support Files/Pods-ScreenShareExt/Pods-ScreenShareExt.release.xcconfig"; sourceTree = "<group>"; };
-		69F00F2E71FC430FE4A1EAED /* Pods-ScreenShareExt.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScreenShareExt.debug.xcconfig"; path = "Target Support Files/Pods-ScreenShareExt/Pods-ScreenShareExt.debug.xcconfig"; sourceTree = "<group>"; };
-		7B8F8041642432B286EA9C33 /* Pods_ScreenShareApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ScreenShareApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		82E898E6EB33F4FD6545685D /* Pods-ScreenShareApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScreenShareApp.release.xcconfig"; path = "Target Support Files/Pods-ScreenShareApp/Pods-ScreenShareApp.release.xcconfig"; sourceTree = "<group>"; };
-		B708CB415EBF7B6E8D8BD2D1 /* Pods-ScreenShareApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScreenShareApp.debug.xcconfig"; path = "Target Support Files/Pods-ScreenShareApp/Pods-ScreenShareApp.debug.xcconfig"; sourceTree = "<group>"; };
-		C1E6D21CCCF1F34D0EC9E3C4 /* Pods_ScreenShareExt.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ScreenShareExt.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		11BB08FBF5366BADD8963F8C /* Pods_ScreenShareApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ScreenShareApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		897C7531342FC6F83E3CB672 /* Pods-ScreenShareExt.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScreenShareExt.release.xcconfig"; path = "Target Support Files/Pods-ScreenShareExt/Pods-ScreenShareExt.release.xcconfig"; sourceTree = "<group>"; };
+		9081308FDDCE5C8B67D42AAC /* Pods-ScreenShareApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScreenShareApp.release.xcconfig"; path = "Target Support Files/Pods-ScreenShareApp/Pods-ScreenShareApp.release.xcconfig"; sourceTree = "<group>"; };
+		A7BD3366B2208021348C6A29 /* Pods_ScreenShareExt.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ScreenShareExt.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB93B314F655D77F275014AF /* Pods-ScreenShareExt.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScreenShareExt.debug.xcconfig"; path = "Target Support Files/Pods-ScreenShareExt/Pods-ScreenShareExt.debug.xcconfig"; sourceTree = "<group>"; };
+		EBA335786CE480DDBF510A58 /* Pods-ScreenShareApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScreenShareApp.debug.xcconfig"; path = "Target Support Files/Pods-ScreenShareApp/Pods-ScreenShareApp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -102,6 +102,8 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		061A347F2F8643830021144A /* test */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = test;
 			sourceTree = "<group>";
 		};
@@ -116,11 +118,15 @@
 		};
 		06F4EBE62F863EE100921DFC /* ScreenShareAppTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = ScreenShareAppTests;
 			sourceTree = "<group>";
 		};
 		06F4EBF02F863EE100921DFC /* ScreenShareAppUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = ScreenShareAppUITests;
 			sourceTree = "<group>";
 		};
@@ -139,7 +145,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				056977F620443701DAD02568 /* Pods_ScreenShareApp.framework in Frameworks */,
+				BBB645431090C0B6B9D67BBC /* Pods_ScreenShareApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,7 +168,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				06F4EC072F863F8800921DFC /* ReplayKit.framework in Frameworks */,
-				761721C9D502E35EB979488C /* Pods_ScreenShareExt.framework in Frameworks */,
+				18B1799B13B3587A09320A24 /* Pods_ScreenShareExt.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,8 +204,8 @@
 			isa = PBXGroup;
 			children = (
 				06F4EC062F863F8800921DFC /* ReplayKit.framework */,
-				7B8F8041642432B286EA9C33 /* Pods_ScreenShareApp.framework */,
-				C1E6D21CCCF1F34D0EC9E3C4 /* Pods_ScreenShareExt.framework */,
+				11BB08FBF5366BADD8963F8C /* Pods_ScreenShareApp.framework */,
+				A7BD3366B2208021348C6A29 /* Pods_ScreenShareExt.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -207,10 +213,10 @@
 		D3F316BCC1E4A9475756E3F2 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				B708CB415EBF7B6E8D8BD2D1 /* Pods-ScreenShareApp.debug.xcconfig */,
-				82E898E6EB33F4FD6545685D /* Pods-ScreenShareApp.release.xcconfig */,
-				69F00F2E71FC430FE4A1EAED /* Pods-ScreenShareExt.debug.xcconfig */,
-				1DF1B70B6B301615CB4E3321 /* Pods-ScreenShareExt.release.xcconfig */,
+				EBA335786CE480DDBF510A58 /* Pods-ScreenShareApp.debug.xcconfig */,
+				9081308FDDCE5C8B67D42AAC /* Pods-ScreenShareApp.release.xcconfig */,
+				CB93B314F655D77F275014AF /* Pods-ScreenShareExt.debug.xcconfig */,
+				897C7531342FC6F83E3CB672 /* Pods-ScreenShareExt.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -222,13 +228,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 06F4EBF72F863EE100921DFC /* Build configuration list for PBXNativeTarget "ScreenShareApp" */;
 			buildPhases = (
-				EEBDF82349ED12C29017D7DE /* [CP] Check Pods Manifest.lock */,
+				631887E998C603F53763C74F /* [CP] Check Pods Manifest.lock */,
 				06F4EBCF2F863EE000921DFC /* Sources */,
 				06F4EBD02F863EE000921DFC /* Frameworks */,
 				06F4EBD12F863EE000921DFC /* Resources */,
 				06F4EC132F863F8800921DFC /* Embed Foundation Extensions */,
 				061A348B2F8643830021144A /* Embed ExtensionKit Extensions */,
-				181266BE4B40E2475C5CF98E /* [CP] Embed Pods Frameworks */,
+				3ABA207B806A73A6B5F70592 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -289,7 +295,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 06F4EC102F863F8800921DFC /* Build configuration list for PBXNativeTarget "ScreenShareExt" */;
 			buildPhases = (
-				6CAAEE95699CEAF3805B4733 /* [CP] Check Pods Manifest.lock */,
+				7A8D53F2AD6A46521ABCE887 /* [CP] Check Pods Manifest.lock */,
 				06F4EC002F863F8800921DFC /* Sources */,
 				06F4EC012F863F8800921DFC /* Frameworks */,
 				06F4EC022F863F8800921DFC /* Resources */,
@@ -387,7 +393,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		181266BE4B40E2475C5CF98E /* [CP] Embed Pods Frameworks */ = {
+		3ABA207B806A73A6B5F70592 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -404,29 +410,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ScreenShareApp/Pods-ScreenShareApp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6CAAEE95699CEAF3805B4733 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ScreenShareExt-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		EEBDF82349ED12C29017D7DE /* [CP] Check Pods Manifest.lock */ = {
+		631887E998C603F53763C74F /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -442,6 +426,28 @@
 			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-ScreenShareApp-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7A8D53F2AD6A46521ABCE887 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ScreenShareExt-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -621,7 +627,7 @@
 		};
 		06F4EBF82F863EE100921DFC /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B708CB415EBF7B6E8D8BD2D1 /* Pods-ScreenShareApp.debug.xcconfig */;
+			baseConfigurationReference = EBA335786CE480DDBF510A58 /* Pods-ScreenShareApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -654,7 +660,7 @@
 		};
 		06F4EBF92F863EE100921DFC /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 82E898E6EB33F4FD6545685D /* Pods-ScreenShareApp.release.xcconfig */;
+			baseConfigurationReference = 9081308FDDCE5C8B67D42AAC /* Pods-ScreenShareApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -759,7 +765,7 @@
 		};
 		06F4EC112F863F8800921DFC /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 69F00F2E71FC430FE4A1EAED /* Pods-ScreenShareExt.debug.xcconfig */;
+			baseConfigurationReference = CB93B314F655D77F275014AF /* Pods-ScreenShareExt.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = ScreenShareExt/ScreenShareExt.entitlements;
@@ -788,7 +794,7 @@
 		};
 		06F4EC122F863F8800921DFC /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1DF1B70B6B301615CB4E3321 /* Pods-ScreenShareExt.release.xcconfig */;
+			baseConfigurationReference = 897C7531342FC6F83E3CB672 /* Pods-ScreenShareExt.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = ScreenShareExt/ScreenShareExt.entitlements;

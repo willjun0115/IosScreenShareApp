@@ -24,10 +24,10 @@ class WebRTCManager: NSObject {
         let videoEncoderFactory = KAUEncoderFactory()
         let videoDecoderFactory = RTCDefaultVideoDecoderFactory()
 
-        let info = videoEncoderFactory.supportedCodecs()
-        if let first = info.first {
-            let _ = videoEncoderFactory.createEncoder(first)
-        }
+//        let info = videoEncoderFactory.supportedCodecs()
+//        if let first = info.first {
+//            let _ = videoEncoderFactory.createEncoder(first)
+//        }
         
         self.factory = RTCPeerConnectionFactory(
             encoderFactory: videoEncoderFactory,
@@ -42,15 +42,66 @@ class WebRTCManager: NSObject {
     }
     
     // 시청자로부터 Offer 수신 시 해당 시청자 전용 PC를 생성하고 Answer 응답
+//    func handleOffer(from peerId: String, sdp: String) {
+//        let config = RTCConfiguration()
+//        config.iceServers = [RTCIceServer(urlStrings: ["stun:stun.l.google.com:19302"])]
+//        let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
+//        
+//        let newPc = factory.peerConnection(with: config, constraints: constraints, delegate: self)
+//        
+//        // 내 화면 트랙 추가
+//        newPc.add(self.videoTrack, streamIds: ["stream0"])
+//        self.peerConnections[peerId] = newPc
+//        
+//        let remoteSdp = RTCSessionDescription(type: .offer, sdp: sdp)
+//        newPc.setRemoteDescription(remoteSdp) { [weak self, weak newPc] error in
+//            guard error == nil else {
+//                NSLog("❌ [\(peerId)] Remote Description 에러: \(String(describing: error))")
+//                return
+//            }
+//            
+//            newPc?.answer(for: constraints) { (answerSdp, answerError) in
+//                guard let answerSdp = answerSdp else { return }
+//                
+//                // answer sdp 코덱 우선순위 편집
+//                let modifiedSdpString = self?.preferCodec(in: answerSdp.sdp, codecName: "H264") ?? answerSdp.sdp
+//                let modifiedSdp = RTCSessionDescription(type: answerSdp.type, sdp: modifiedSdpString)
+//                
+//                newPc?.setLocalDescription(modifiedSdp) { _ in
+//                    
+//                    let payload: [String: Any] = [
+//                        "to": peerId,
+//                        "data": [
+//                            "type": "answer",
+//                            "sdp": modifiedSdp.sdp
+//                        ]
+//                    ]
+//                    self?.socket.emit("answer", payload)
+//                }
+//            }
+//        }
+//    }
+    
     func handleOffer(from peerId: String, sdp: String) {
         let config = RTCConfiguration()
         config.iceServers = [RTCIceServer(urlStrings: ["stun:stun.l.google.com:19302"])]
-        let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
+        config.sdpSemantics = .unifiedPlan
         
-        let newPc = factory.peerConnection(with: config, constraints: constraints, delegate: self)
+        // 수신 전용(recvonly) 제약 조건
+        let constraints = RTCMediaConstraints(
+            mandatoryConstraints: [
+                kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueTrue,
+                kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue
+            ],
+            optionalConstraints: nil
+        )
         
-        // 내 화면 트랙 추가
-        newPc.add(self.videoTrack, streamIds: ["stream0"])
+        guard let newPc = factory.peerConnection(with: config, constraints: constraints, delegate: self) else { return }
+        
+        // 수신자이므로 수신 전용 트랜시버로 방향을 고정합니다. (로컬 트랙 추가 안 함)
+        newPc.addTransceiver(of: .video)!.setDirection(.recvOnly, error: nil)
+        newPc.addTransceiver(of: .audio)!.setDirection(.recvOnly, error: nil)
+        
         self.peerConnections[peerId] = newPc
         
         let remoteSdp = RTCSessionDescription(type: .offer, sdp: sdp)
@@ -63,17 +114,15 @@ class WebRTCManager: NSObject {
             newPc?.answer(for: constraints) { (answerSdp, answerError) in
                 guard let answerSdp = answerSdp else { return }
                 
-                // answer sdp 코덱 우선순위 편집
-                let modifiedSdpString = self?.preferCodec(in: answerSdp.sdp, codecName: "H264") ?? answerSdp.sdp
-                let modifiedSdp = RTCSessionDescription(type: answerSdp.type, sdp: modifiedSdpString)
+                // let modifiedSdpString = self?.preferCodec(in: answerSdp.sdp, codecName: "H264") ?? answerSdp.sdp
+                // let modifiedSdp = RTCSessionDescription(type: answerSdp.type, sdp: modifiedSdpString)
                 
-                newPc?.setLocalDescription(modifiedSdp) { _ in
-                    
+                newPc?.setLocalDescription(answerSdp) { _ in
                     let payload: [String: Any] = [
                         "to": peerId,
                         "data": [
                             "type": "answer",
-                            "sdp": modifiedSdp.sdp
+                            "sdp": answerSdp.sdp
                         ]
                     ]
                     self?.socket.emit("answer", payload)
@@ -96,11 +145,11 @@ class WebRTCManager: NSObject {
             optionalConstraints: nil
         )
         
-        let newPc = factory.peerConnection(with: config, constraints: constraints, delegate: self)
+        guard let newPc = factory.peerConnection(with: config, constraints: constraints, delegate: self) else { return }
         
         // 트랜시버를 수신 전용으로 설정
-        newPc.addTransceiver(of: .video).setDirection(.recvOnly, error: nil)
-        newPc.addTransceiver(of: .audio).setDirection(.recvOnly, error: nil)
+        newPc.addTransceiver(of: .video)!.setDirection(.recvOnly, error: nil)
+        newPc.addTransceiver(of: .audio)!.setDirection(.recvOnly, error: nil)
         
         self.peerConnections[parentId] = newPc
         
@@ -111,15 +160,49 @@ class WebRTCManager: NSObject {
             }
             
             // sdp 코덱 우선순위 편집
-            let modifiedSdpString = self?.preferCodec(in: sdp.sdp, codecName: "H264") ?? sdp.sdp
-            let modifiedSdp = RTCSessionDescription(type: sdp.type, sdp: modifiedSdpString)
+            // let modifiedSdpString = self?.preferCodec(in: sdp.sdp, codecName: "H264") ?? sdp.sdp
+            // let modifiedSdp = RTCSessionDescription(type: sdp.type, sdp: modifiedSdpString)
             
-            newPc?.setLocalDescription(modifiedSdp) { _ in
+            newPc?.setLocalDescription(sdp) { _ in
                 let payload: [String: Any] = [
                     "to": parentId,
                     "data": [
                         "type": "offer",
-                        "sdp": modifiedSdp.sdp
+                        "sdp": sdp.sdp
+                    ]
+                ]
+                self?.socket.emit("offer", payload)
+            }
+        }
+    }
+    
+    func createSenderConnection(to childId: String) {
+        let config = RTCConfiguration()
+        config.iceServers = [RTCIceServer(urlStrings: ["stun:stun.l.google.com:19302"])]
+        let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
+        
+        guard let newPc = factory.peerConnection(with: config, constraints: constraints, delegate: self) else { return }
+        
+        // 송출자이므로 내 화면/카메라 트랙을 추가합니다.
+        newPc.add(self.videoTrack, streamIds: ["stream0"])
+        self.peerConnections[childId] = newPc
+        
+        newPc.offer(for: constraints) { [weak self, weak newPc] (sdp, error) in
+            guard let sdp = sdp else {
+                NSLog("❌ Offer 생성 실패: \(String(describing: error))")
+                return
+            }
+            
+            // sdp 코덱 우선순위 편집 (H264)
+            // let modifiedSdpString = self?.preferCodec(in: sdp.sdp, codecName: "H264") ?? sdp.sdp
+            // let modifiedSdp = RTCSessionDescription(type: sdp.type, sdp: modifiedSdpString)
+            
+            newPc?.setLocalDescription(sdp) { _ in
+                let payload: [String: Any] = [
+                    "to": childId,
+                    "data": [
+                        "type": "offer",
+                        "sdp": sdp.sdp
                     ]
                 ]
                 self?.socket.emit("offer", payload)
@@ -184,7 +267,7 @@ extension WebRTCManager {
         var mLineIndex: Int? = nil
         var targetPayloadTypes: [String] = []
         
-        // 1. m=video 라인을 찾고, a=rtpmap 라인에서 타겟 코덱의 페이로드 타입을 수집
+        // m=video 라인을 찾은 후, a=rtpmap 라인에서 타겟 코덱의 페이로드 타입을 수집
         for (index, line) in lines.enumerated() {
             if line.hasPrefix("m=video") {
                 mLineIndex = index
@@ -196,18 +279,18 @@ extension WebRTCManager {
             }
         }
         
-        // 2. 비디오 라인이 없거나 해당 코덱이 sdp에 아예 없다면 원본 반환
+        // 비디오 라인이 없거나 해당 코덱이 sdp에 아예 없다면 원본 반환
         guard let mLineIdx = mLineIndex, !targetPayloadTypes.isEmpty else {
             return sdp
         }
         
-        var mLineParts = lines[mLineIdx].components(separatedBy: " ")
+        let mLineParts = lines[mLineIdx].components(separatedBy: " ")
         guard mLineParts.count > 3 else { return sdp }
         
         let coreParts = Array(mLineParts[0..<3])
         let payloadTypes = Array(mLineParts[3...])
         
-        // 3. 페이로드 타입 순서 재배치 (타겟 코덱을 앞으로)
+        // 페이로드 타입 순서 재배치
         var preferredPayloadTypes: [String] = []
         var otherPayloadTypes: [String] = []
         
@@ -223,7 +306,7 @@ extension WebRTCManager {
         let newMLine = (coreParts + preferredPayloadTypes + otherPayloadTypes).joined(separator: " ")
         lines[mLineIdx] = newMLine
         
-        NSLog("⚙️ [WebRTC] SDP Munging 완료: \(codecName) 우선순위 적용")
+        NSLog("SDP Munged: \(newMLine)")
         return lines.joined(separator: "\r\n")
     }
 }

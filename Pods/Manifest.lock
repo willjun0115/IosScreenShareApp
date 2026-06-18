@@ -1,24 +1,25 @@
 PODS:
-  - GoogleWebRTC (1.1.32000)
   - Socket.IO-Client-Swift (16.1.1):
     - Starscream (~> 4.0.8)
   - Starscream (4.0.8)
+  - WebRTC-SDK (144.7559.09)
 
 DEPENDENCIES:
-  - GoogleWebRTC
   - Socket.IO-Client-Swift
+  - WebRTC-SDK
 
 SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - WebRTC-SDK
   trunk:
-    - GoogleWebRTC
     - Socket.IO-Client-Swift
     - Starscream
 
 SPEC CHECKSUMS:
-  GoogleWebRTC: 4d261187b30512efdb711d21fa961a6adf138717
   Socket.IO-Client-Swift: 3614bea82ba005df1c2ff01154f4004993e05ad7
   Starscream: 19b5533ddb925208db698f0ac508a100b884a1b9
+  WebRTC-SDK: e6006119cd730d6315d875e4a421b6cc8bb88833
 
-PODFILE CHECKSUM: 9c66178169139533c7c97d5dff8cd18a3a3d1951
+PODFILE CHECKSUM: d7b16af6c730dd5c1413e88f40af05183fd8065e
 
 COCOAPODS: 1.16.2

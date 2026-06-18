@@ -1,8 +1,12 @@
+source 'https://github.com/CocoaPods/Specs.git'
+source 'https://github.com/webrtc-sdk/Specs.git'
+
 # Uncomment the next line to define a global platform for your project
 platform :ios, '15.0'
 
 def shared_pods
-  pod 'GoogleWebRTC'
+  # pod 'GoogleWebRTC'
+  pod 'WebRTC-SDK'
   pod 'Socket.IO-Client-Swift'
 end
 
