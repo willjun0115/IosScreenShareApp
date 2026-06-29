@@ -75,11 +75,8 @@ class WebRTCManager: NSObject {
         if currentMode == .viewerAsOfferer {
             // 송신자이므로 내 화면(로컬 비디오 트랙)을 PC에 추가
             newPc.add(self.videoTrack, streamIds: ["stream0"])
-        } else {
-            // 수신자이므로 수신 전용(recvOnly) 트랜시버로 방향 고정
-            newPc.addTransceiver(of: .video)!.setDirection(.recvOnly, error: nil)
-            newPc.addTransceiver(of: .audio)!.setDirection(.recvOnly, error: nil)
         }
+        // 수신자의 경우 Offer 수신 시 자동 생성되므로 addTransceiver 불필요
         
         self.peerConnections[peerId] = newPc
         
@@ -413,21 +410,25 @@ extension WebRTCManager: RTCPeerConnectionDelegate {
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
+        guard let peerId = peerConnections.first(where: { $0.value == peerConnection })?.key else { return }
+        
+        NSLog("ℹ️ [\(peerId)] ICE Connection State: \(newState.rawValue)")
+        
         // 연결이 완전히 끊기면 메모리(딕셔너리)에서 정리
         if newState == .disconnected || newState == .failed || newState == .closed {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 
-                if let peerId = self.peerConnections.first(where: { $0.value == peerConnection })?.key {
-                    peerConnection.close()
-                    self.peerConnections.removeValue(forKey: peerId)
-                    NSLog("⚠️ [\(peerId)] 연결 종료됨. 메인 스레드에서 PC 정리 완료.")
-                }
+                peerConnection.close()
+                self.peerConnections.removeValue(forKey: peerId)
+                NSLog("⚠️ [\(peerId)] 연결 종료됨. 메인 스레드에서 PC 정리 완료.")
             }
         }
     }
     
-    func peerConnection(_ peerConnection: RTCPeerConnection, didChange stateChanged: RTCSignalingState) {}
+    func peerConnection(_ peerConnection: RTCPeerConnection, didChange stateChanged: RTCSignalingState) {
+        NSLog("ℹ️ Signaling State: \(stateChanged.rawValue)")
+    }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didAdd stream: RTCMediaStream) {
         NSLog("✅ [WebRTC] 원격 스트림 수신됨: \(stream.streamId)")
