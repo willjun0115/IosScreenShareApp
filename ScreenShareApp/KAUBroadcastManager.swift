@@ -159,11 +159,15 @@ class KAUBroadcastManager: ObservableObject {
         }
         
         socket?.on("candidate") { [weak self] data, _ in
+            NSLog("📥 [Signaling] candidate 수신 데이터: \(data)")
             if let dict = data[0] as? [String: Any],
                let fromId = dict["from"] as? String,
                let candData = dict["data"] as? [String: Any],
                let candidateDict = candData["candidate"] as? [String: Any] {
+                NSLog("✅ [Signaling] candidate 파싱 성공 from: \(fromId)")
                 self?.rtcManager?.handleCandidate(from: fromId, candidateDict: candidateDict)
+            } else {
+                NSLog("❌ [Signaling] candidate 파싱 실패")
             }
         }
         

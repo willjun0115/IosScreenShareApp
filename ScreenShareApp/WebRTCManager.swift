@@ -392,6 +392,8 @@ extension WebRTCManager: RTCPeerConnectionDelegate {
     func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
         guard let peerId = peerConnections.first(where: { $0.value == peerConnection })?.key else { return }
         
+        NSLog("📤 [WebRTC] ICE Candidate 생성됨: \(candidate.sdp) (to: \(peerId))")
+        
         let candidateDict: [String: Any] = [
             "sdpMLineIndex": candidate.sdpMLineIndex,
             "sdpMid": candidate.sdpMid ?? "",
