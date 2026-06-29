@@ -17,8 +17,14 @@ class KAUBroadcastManager: ObservableObject {
     private let cameraCapturer = KAUCameraCapturer()
     
     #if canImport(ScreenCaptureKit)
+    private var _macCapturer: Any?
     @available(macOS 12.3, iOS 18.0, macCatalyst 18.2, *)
-    private lazy var macCapturer = KAUMacScreenCapturer()
+    private var macCapturer: KAUMacScreenCapturer {
+        if _macCapturer == nil {
+            _macCapturer = KAUMacScreenCapturer()
+        }
+        return _macCapturer as! KAUMacScreenCapturer
+    }
     #endif
     
     var socketManager: SocketManager?
