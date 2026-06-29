@@ -41,8 +41,9 @@ class KAUProxyEncoder: NSObject, RTCVideoEncoder {
     }
     
     func startEncode(with settings: RTCVideoEncoderSettings, numberOfCores: Int32) -> Int {
-        // ✨ 핵심: 코덱 이름에 가로/세로 해상도를 결합하여 독립적인 엔진 키 생성 (예: "vp8_720x1280")
-        let key = "\(codecInfo.name.lowercased())_\(settings.width)x\(settings.height)"
+        // ✨ 핵심: 해상도가 변경되더라도 하드웨어 인코더가 무한 증식하는 메모리 누수를 막기 위해,
+        // 코덱 이름만으로 단일 마스터 키를 생성합니다. (해상도 무시)
+        let key = "\(codecInfo.name.lowercased())_master"
         self.activeEncoderKey = key
         
         // 키가 생성되었으므로 대기 중이던 콜백을 마스터에 등록
