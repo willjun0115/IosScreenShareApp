@@ -72,8 +72,15 @@ struct ContentView: View {
                             .foregroundColor(.blue)
                             .multilineTextAlignment(.center)
                         
+                        #if os(iOS)
                         BroadcastPickerView()
                             .frame(width: 60, height: 60)
+                        #else
+                        Text("macOS 화면 캡처가 진행 중입니다.")
+                            .font(.headline)
+                            .foregroundColor(.blue)
+                            .padding()
+                        #endif
                     } else if currentSource == .camera {
                         Text("📷 전면 카메라 공유 중입니다...")
                             .font(.headline)

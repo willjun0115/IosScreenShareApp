@@ -8,6 +8,7 @@
 import SwiftUI
 import ReplayKit
 
+#if os(iOS)
 struct BroadcastPickerView: UIViewRepresentable {
     func makeUIView(context: Context) -> RPSystemBroadcastPickerView {
         let picker = RPSystemBroadcastPickerView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
@@ -20,3 +21,4 @@ struct BroadcastPickerView: UIViewRepresentable {
 
     func updateUIView(_ uiView: RPSystemBroadcastPickerView, context: Context) {}
 }
+#endif

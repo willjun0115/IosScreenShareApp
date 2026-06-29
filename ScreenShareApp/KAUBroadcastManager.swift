@@ -16,6 +16,11 @@ class KAUBroadcastManager: ObservableObject {
     static let shared = KAUBroadcastManager()
     private let cameraCapturer = KAUCameraCapturer()
     
+    #if canImport(ScreenCaptureKit)
+    @available(macOS 12.3, iOS 18.0, *)
+    private lazy var macCapturer = KAUMacScreenCapturer()
+    #endif
+    
     var socketManager: SocketManager?
     var socket: SocketIOClient?
     var rtcManager: WebRTCManager?
@@ -34,10 +39,24 @@ class KAUBroadcastManager: ObservableObject {
             switch source {
             case .screen:
                 cameraCapturer.stopCapture()
+                #if os(macOS) || targetEnvironment(macCatalyst)
+                if #available(macOS 12.3, *) {
+                    KAUReceiver.shared.stopReceiving()
+                    self.macCapturer.startCapture(rtcManager: rtc)
+                } else {
+                    KAUReceiver.shared.startReceiving(rtcManager: rtc)
+                }
+                #else
                 // 익스텐션으로부터 프레임을 받는 mmap 수신기 시작
                 KAUReceiver.shared.startReceiving(rtcManager: rtc)
+                #endif
             case .camera:
                 KAUReceiver.shared.stopReceiving()
+                #if canImport(ScreenCaptureKit)
+                if #available(macOS 12.3, iOS 18.0, *) {
+                    self.macCapturer.stopCapture()
+                }
+                #endif
                 // 메인 앱 직접 카메라 캡처 시작
                 cameraCapturer.startCapture(rtcManager: rtc)
             }
@@ -131,6 +150,11 @@ class KAUBroadcastManager: ObservableObject {
     func stopConnection() {
         KAUReceiver.shared.stopReceiving() // frame receiver 종료
         cameraCapturer.stopCapture() // camera capturer 종료
+        #if canImport(ScreenCaptureKit)
+        if #available(macOS 12.3, iOS 18.0, *) {
+            macCapturer.stopCapture()
+        }
+        #endif
         BackgroundAudioPlayer.shared.stop() // background audio 종료
         socket?.disconnect()
         socketManager = nil
