@@ -17,7 +17,7 @@ class KAUBroadcastManager: ObservableObject {
     private let cameraCapturer = KAUCameraCapturer()
     
     #if canImport(ScreenCaptureKit)
-    @available(macOS 12.3, iOS 18.0, *)
+    @available(macOS 12.3, iOS 18.0, macCatalyst 15.4, *)
     private lazy var macCapturer = KAUMacScreenCapturer()
     #endif
     
@@ -40,7 +40,7 @@ class KAUBroadcastManager: ObservableObject {
             case .screen:
                 cameraCapturer.stopCapture()
                 #if canImport(ScreenCaptureKit)
-                if #available(macOS 12.3, iOS 18.0, *) {
+                if #available(macOS 12.3, iOS 18.0, macCatalyst 15.4, *) {
                     var isMac = false
                     #if os(macOS) || targetEnvironment(macCatalyst)
                     isMac = true
@@ -51,15 +51,19 @@ class KAUBroadcastManager: ObservableObject {
                     #endif
                     
                     if isMac {
+                        NSLog("✅ [Manager] Mac 캡처 분기 진입 (ScreenCaptureKit)")
                         KAUReceiver.shared.stopReceiving()
                         self.macCapturer.startCapture(rtcManager: rtc)
                     } else {
+                        NSLog("✅ [Manager] iOS 캡처 분기 진입 (mmap)")
                         KAUReceiver.shared.startReceiving(rtcManager: rtc)
                     }
                 } else {
+                    NSLog("⚠️ [Manager] ScreenCaptureKit 지원 안 됨 (버전 낮음)")
                     KAUReceiver.shared.startReceiving(rtcManager: rtc)
                 }
                 #else
+                NSLog("⚠️ [Manager] ScreenCaptureKit Import 실패 (iOS 전용 빌드)")
                 // 익스텐션으로부터 프레임을 받는 mmap 수신기 시작
                 KAUReceiver.shared.startReceiving(rtcManager: rtc)
                 #endif
@@ -164,7 +168,7 @@ class KAUBroadcastManager: ObservableObject {
         KAUReceiver.shared.stopReceiving() // frame receiver 종료
         cameraCapturer.stopCapture() // camera capturer 종료
         #if canImport(ScreenCaptureKit)
-        if #available(macOS 12.3, iOS 18.0, *) {
+        if #available(macOS 12.3, iOS 18.0, macCatalyst 15.4, *) {
             macCapturer.stopCapture()
         }
         #endif
