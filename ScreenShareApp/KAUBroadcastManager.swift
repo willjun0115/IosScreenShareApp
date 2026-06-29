@@ -76,7 +76,7 @@ class KAUBroadcastManager: ObservableObject {
             case .camera:
                 KAUReceiver.shared.stopReceiving()
                 #if canImport(ScreenCaptureKit)
-                if #available(macOS 12.3, iOS 18.0, *) {
+                if #available(macOS 12.3, iOS 18.0, macCatalyst 18.2, *) {
                     self.macCapturer.stopCapture()
                 }
                 #endif
@@ -98,7 +98,7 @@ class KAUBroadcastManager: ObservableObject {
         socket = socketManager?.defaultSocket
         BackgroundAudioPlayer.shared.start()
         
-        rtcManager = WebRTCManager(socket: socket!, mode: .viewerAsOfferer)
+        rtcManager = WebRTCManager(socket: socket!, mode: .broadcasterAsOfferer)
         
         rtcManager?.onRemoteVideoTrackReceived = { [weak self] track in
             self?.remoteVideoTrack = track
