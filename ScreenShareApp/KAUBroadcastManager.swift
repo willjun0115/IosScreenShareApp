@@ -39,10 +39,23 @@ class KAUBroadcastManager: ObservableObject {
             switch source {
             case .screen:
                 cameraCapturer.stopCapture()
-                #if os(macOS) || targetEnvironment(macCatalyst)
-                if #available(macOS 12.3, *) {
-                    KAUReceiver.shared.stopReceiving()
-                    self.macCapturer.startCapture(rtcManager: rtc)
+                #if canImport(ScreenCaptureKit)
+                if #available(macOS 12.3, iOS 18.0, *) {
+                    var isMac = false
+                    #if os(macOS) || targetEnvironment(macCatalyst)
+                    isMac = true
+                    #else
+                    if ProcessInfo.processInfo.isiOSAppOnMac {
+                        isMac = true
+                    }
+                    #endif
+                    
+                    if isMac {
+                        KAUReceiver.shared.stopReceiving()
+                        self.macCapturer.startCapture(rtcManager: rtc)
+                    } else {
+                        KAUReceiver.shared.startReceiving(rtcManager: rtc)
+                    }
                 } else {
                     KAUReceiver.shared.startReceiving(rtcManager: rtc)
                 }

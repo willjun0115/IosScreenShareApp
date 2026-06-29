@@ -73,8 +73,15 @@ struct ContentView: View {
                             .multilineTextAlignment(.center)
                         
                         #if os(iOS)
-                        BroadcastPickerView()
-                            .frame(width: 60, height: 60)
+                        if ProcessInfo.processInfo.isiOSAppOnMac {
+                            Text("macOS 화면 캡처가 진행 중입니다.")
+                                .font(.headline)
+                                .foregroundColor(.blue)
+                                .padding()
+                        } else {
+                            BroadcastPickerView()
+                                .frame(width: 60, height: 60)
+                        }
                         #else
                         Text("macOS 화면 캡처가 진행 중입니다.")
                             .font(.headline)
