@@ -102,8 +102,6 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		061A347F2F8643830021144A /* test */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = test;
 			sourceTree = "<group>";
 		};
@@ -118,15 +116,11 @@
 		};
 		06F4EBE62F863EE100921DFC /* ScreenShareAppTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = ScreenShareAppTests;
 			sourceTree = "<group>";
 		};
 		06F4EBF02F863EE100921DFC /* ScreenShareAppUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = ScreenShareAppUITests;
 			sourceTree = "<group>";
 		};

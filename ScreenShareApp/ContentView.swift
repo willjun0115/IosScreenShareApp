@@ -41,16 +41,16 @@ struct ContentView: View {
             Spacer()
             
             // 디버깅용 블랙박스 버튼 (유지)
-            Button("익스텐션 블랙박스 확인") {
-                let defaults = UserDefaults(suiteName: "group.com.will115.screenshare")
-                let logs = defaults?.stringArray(forKey: "ExtLogs") ?? ["로그 없음"]
-                print("===== 📦 익스텐션 블랙박스 =====")
-                for log in logs {
-                    print(log)
-                }
-                print("===============================")
-            }
-            .foregroundColor(.red)
+//            Button("익스텐션 블랙박스 확인") {
+//                let defaults = UserDefaults(suiteName: "group.com.will115.screenshare")
+//                let logs = defaults?.stringArray(forKey: "ExtLogs") ?? ["로그 없음"]
+//                print("===== 📦 익스텐션 블랙박스 =====")
+//                for log in logs {
+//                    print(log)
+//                }
+//                print("===============================")
+//            }
+//            .foregroundColor(.red)
 
             if broadcastManager.isConnected {
                 VStack(spacing: 20) {
