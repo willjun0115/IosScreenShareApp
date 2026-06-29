@@ -31,7 +31,7 @@ class KAUReceiver {
         
         fileDescriptor = open(fileURL.path, O_RDWR, S_IRUSR | S_IWUSR)
         if fileDescriptor == -1 {
-            NSLog("⚠️ [MAIN] 공유 파일 열기 실패. 아직 익스텐션이 생성하지 않았을 수 있습니다.")
+            NSLog("⚠️ [Frame Receiver] 공유 파일 열기 실패. 아직 익스텐션이 생성하지 않았을 수 있습니다.")
             // 여기서는 실패하더라도 DisplayLink는 돌려야 익스텐션이 나중에 파일을 만들었을 때 읽을 수 있습니다.
         } else {
             mappedMemory = mmap(nil, mappedSize, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor, 0)

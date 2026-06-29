@@ -45,7 +45,7 @@ class KAUBroadcastManager: ObservableObject {
     }
     
     func startConnection(roomID: String) {
-        let serverURL = URL(string: "https://192.168.1.62:8000")!
+        let serverURL = URL(string: "https://192.168.1.5:8000")!
         socketManager = SocketManager(socketURL: serverURL, config: [
             .log(false),
             .forceWebsockets(true),
@@ -56,7 +56,7 @@ class KAUBroadcastManager: ObservableObject {
         socket = socketManager?.defaultSocket
         BackgroundAudioPlayer.shared.start()
         
-        rtcManager = WebRTCManager(socket: socket!)
+        rtcManager = WebRTCManager(socket: socket!, mode: .viewerAsOfferer)
         
         rtcManager?.onRemoteVideoTrackReceived = { [weak self] track in
             self?.remoteVideoTrack = track
@@ -87,7 +87,7 @@ class KAUBroadcastManager: ObservableObject {
         socket?.on("new-parent") { [weak self] data, _ in
             if let parentId = data[0] as? String {
                 NSLog("✅ [Signaling] 새 부모 할당됨: \(parentId). 시청용 Offer 전송...")
-                // self?.rtcManager?.createReceiverConnection(to: parentId)
+                self?.rtcManager?.createReceiverConnection(to: parentId)
             }
         }
         

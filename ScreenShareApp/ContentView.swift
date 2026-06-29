@@ -12,7 +12,7 @@ struct ContentView: View {
     @StateObject private var broadcastManager = KAUBroadcastManager.shared
     @FocusState private var isInputActive: Bool
     
-    // ✨ 추가: 현재 선택된 공유 모드를 추적하는 상태 변수
+    // 현재 선택된 공유 모드를 추적하는 상태 변수
     @State private var currentSource: captureSource? = nil
 
     var body: some View {
@@ -122,6 +122,20 @@ struct ContentView: View {
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.green)
+                            .cornerRadius(10)
+                    }
+                    
+                    Button(action: {
+                        isInputActive = false
+                        currentSource = nil // 시청자는 로컬 캡처 소스가 없음을 명시
+                        // 캡처 파이프라인을 건너뛰고 서버 연결(Socket)만 시작합니다.
+                        broadcastManager.startConnection(roomID: roomID)
+                    }) {
+                        Text("방송 시청하기")
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.orange)
                             .cornerRadius(10)
                     }
                 }

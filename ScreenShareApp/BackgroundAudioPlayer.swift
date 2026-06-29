@@ -17,7 +17,7 @@ class BackgroundAudioPlayer {
     func start() {
         let audioSession = AVAudioSession.sharedInstance()
         do {
-            // 다른 앱의 소리(음악 등)를 끄지 않고 섞이도록 mixWithOthers 옵션 사용
+            // mixWithOthers 옵션 - 다른 앱의 소리를 끄지 않음
             try audioSession.setCategory(.playback, options: .mixWithOthers)
             try audioSession.setActive(true)
             

@@ -4,47 +4,39 @@ import WebRTC
 class KAUMasterEncoder {
     static let shared = KAUMasterEncoder()
     
+    // Key는 "코덱_가로x세로"
     private var realEncoders: [String: RTCVideoEncoder] = [:]
     private var callbacks: [String: [String: RTCVideoEncoderCallback]] = [:]
+    private var isEngineStarted: [String: Bool] = [:]
     private let stateLock = NSLock()
     private var lastEncodedTimestampNs: [String: Int64] = [:]
     
-    func resolutionAlignment(for codecKey: String) -> Int {
-        stateLock.lock()
-        defer { stateLock.unlock() }
-        return Int(realEncoders[codecKey]?.resolutionAlignment ?? 1)
-    }
-    
-    func applyAlignmentToAllSimulcastLayers(for codecKey: String) -> Bool {
-        stateLock.lock()
-        defer { stateLock.unlock() }
-        return realEncoders[codecKey]?.applyAlignmentToAllSimulcastLayers ?? false
-    }
-    
-    func supportsNativeHandle(for codecKey: String) -> Bool {
-        stateLock.lock()
-        defer { stateLock.unlock() }
-        return realEncoders[codecKey]?.supportsNativeHandle ?? false
-    }
-    
     init() {}
     
-    // 1. 하드웨어 인코더 최초 생성
-    func setupMaster(info: RTCVideoCodecInfo, codecKey: String) {
+    func registerCallback(key: String, id: String, callback: @escaping RTCVideoEncoderCallback) {
         stateLock.lock()
-        defer { stateLock.unlock() }
+        if callbacks[key] == nil { callbacks[key] = [:] }
+        callbacks[key]?[id] = callback
+        let count = callbacks[key]?.count ?? 0
+        stateLock.unlock()
+        NSLog("🔗 [Multiplexer] 콜백 연결 (Key: \(key), 프록시: \(id.prefix(4)), 현재 뷰어: \(count)명)")
+    }
+    
+    // 실제 엔진 생성 시점을 startEncode 내부로 이동시켜 해상도 기반으로 격리 생성
+    func startEncode(key: String, info: RTCVideoCodecInfo, settings: RTCVideoEncoderSettings, numberOfCores: Int32) -> Int {
+        stateLock.lock()
         
-        if realEncoders[codecKey] == nil {
+        if realEncoders[key] == nil {
+            NSLog("🛠️ [Multiplexer] 새 실제 인코더 생성 (Key: \(key))")
             let encoder = RTCDefaultVideoEncoderFactory().createEncoder(info)
-            realEncoders[codecKey] = encoder
-            callbacks[codecKey] = [:]
+            realEncoders[key] = encoder
+            isEngineStarted[key] = false
             
             encoder?.setCallback { [weak self] (encodedImage, codecInfo) -> Bool in
                 guard let self = self else { return false }
                 
                 self.stateLock.lock()
-                let codecCallbacks = self.callbacks[codecKey] ?? [:]
-                let currentCallbacks = Array(codecCallbacks.values)
+                let currentCallbacks = Array((self.callbacks[key] ?? [:]).values)
                 self.stateLock.unlock()
                 
                 for cb in currentCallbacks {
@@ -53,72 +45,68 @@ class KAUMasterEncoder {
                 return true
             }
         }
-    }
-    
-    func registerCallback(codecKey: String, id: String, callback: @escaping RTCVideoEncoderCallback) {
-        stateLock.lock()
-        callbacks[codecKey]?[id] = callback
-        let count = callbacks[codecKey]?.count ?? 0
-        stateLock.unlock()
-        NSLog("🔗 [Multiplexer] 프록시(\(id.prefix(4))) 콜백 연결 (현재 시청자: \(count)명)")
-    }
-    
-    // 2. 엔진 가동 (최초 1회만 진짜 가동, 나머진 패스)
-    func startEncode(codecKey: String, settings: RTCVideoEncoderSettings, numberOfCores: Int32) -> Int {
-        stateLock.lock()
-        let encoder = realEncoders[codecKey]
+        
+        let encoder = realEncoders[key]
+        let alreadyStarted = isEngineStarted[key] ?? false
         stateLock.unlock()
         
-        NSLog("🚀 [Multiplexer] 인코더 설정 업데이트 (Width: \(settings.width), Height: \(settings.height))")
-        
-        return Int(encoder?.startEncode(with: settings, numberOfCores: numberOfCores) ?? -1)
+        // 처음 연결된 뷰어(프록시)일 때만 실제 하드웨어 엔진에 시동을 겁니다.
+        if !alreadyStarted {
+            isEngineStarted[key] = true
+            stateLock.unlock()
+            
+            NSLog("🚀 [Multiplexer] 실제 인코더 엔진 최초 가동 완료 (Key: \(key))")
+            return Int(encoder?.startEncode(with: settings, numberOfCores: numberOfCores) ?? -1)
+        } else {
+            stateLock.unlock()
+            // 두 번째 접속자(맥 등)부터는 하드웨어 인코더를 재가동하지 않고
+            // WebRTC 규격상 성공(0)을 반환하여 C++ 엔진의 크래시를 원천 차단합니다.
+            return 0
+        }
     }
     
-    // 3. 인코딩 처리 (중복 방지)
-    func encode(codecKey: String, frame: RTCVideoFrame, info: RTCCodecSpecificInfo?, frameTypes: [NSNumber]) -> Int {
-        // 전달된 frameTypes에 KeyFrame 요청이 포함되어 있는지 확인
+    func encode(key: String, frame: RTCVideoFrame, info: RTCCodecSpecificInfo?, frameTypes: [NSNumber]) -> Int {
         let isKeyFrame = frameTypes.contains { type in
             RTCFrameType(rawValue: UInt(type.intValue)) == .videoFrameKey
         }
         
         stateLock.lock()
-        if !isKeyFrame && frame.timeStampNs == lastEncodedTimestampNs[codecKey] {
+        if !isKeyFrame && frame.timeStampNs == lastEncodedTimestampNs[key] {
             stateLock.unlock()
             return 0
         }
-        lastEncodedTimestampNs[codecKey] = frame.timeStampNs
-        let encoder = realEncoders[codecKey]
+        lastEncodedTimestampNs[key] = frame.timeStampNs
+        let encoder = realEncoders[key]
         stateLock.unlock()
         
         return Int(encoder?.encode(frame, codecSpecificInfo: info, frameTypes: frameTypes) ?? -1)
     }
     
-    // 4. 프록시 해제
-    func releaseProxy(codecKey: String, id: String) -> Int {
+    func releaseProxy(key: String, id: String) -> Int {
         stateLock.lock()
-        callbacks[codecKey]?.removeValue(forKey: id)
-        let count = callbacks[codecKey]?.count ?? 0
+        callbacks[key]?.removeValue(forKey: id)
+        let count = callbacks[key]?.count ?? 0
         stateLock.unlock()
         
-        NSLog("🔽 [Multiplexer] 프록시(\(id.prefix(4))) 연결 해제 (남은 시청자: \(count)명)")
+        NSLog("🔽 [Multiplexer] 프록시 해제 (Key: \(key), 남은 뷰어: \(count)명)")
         return 0
     }
     
-    func setBitrate(codecKey: String, bitrateKbit: UInt32, framerate: UInt32) -> Int32 {
+    func setBitrate(key: String, bitrateKbit: UInt32, framerate: UInt32) -> Int32 {
         stateLock.lock()
-        let encoder = realEncoders[codecKey]
+        let encoder = realEncoders[key]
         stateLock.unlock()
         return encoder?.setBitrate(bitrateKbit, framerate: framerate) ?? 0
     }
     
-    func scalingSettings(codecKey: String) -> RTCVideoEncoderQpThresholds? {
+    func scalingSettings(key: String) -> RTCVideoEncoderQpThresholds? {
         stateLock.lock()
-        let encoder = realEncoders[codecKey]
+        let encoder = realEncoders[key]
         stateLock.unlock()
         return encoder?.scalingSettings()
     }
     
     func implementationName() -> String {
-        return "KAU_Multiplexer_Final"
+        return "KAU_Multiplexer_Resolution_Aware"
     }
 }
