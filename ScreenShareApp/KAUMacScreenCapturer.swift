@@ -10,7 +10,7 @@ import WebRTC
 #if canImport(ScreenCaptureKit)
 import ScreenCaptureKit
 
-@available(macOS 12.3, iOS 18.0, macCatalyst 15.4, *)
+@available(macOS 12.3, iOS 18.0, macCatalyst 18.2, *)
 class KAUMacScreenCapturer: NSObject, SCStreamOutput {
     private var stream: SCStream?
     private var rtcManager: WebRTCManager?
