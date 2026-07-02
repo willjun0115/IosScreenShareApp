@@ -44,13 +44,26 @@ struct ContentView: View {
                     .foregroundColor(.gray)
                     .padding(.top, 10)
                 
-                Picker("협상 모드", selection: $clientMode) {
+                HStack(spacing: 0) {
                     ForEach(RTCClientMode.allCases) { mode in
-                        Text(mode.rawValue).tag(mode)
+                        Button(action: {
+                            clientMode = mode
+                        }) {
+                            Text(mode.rawValue)
+                                .font(.system(size: 13, weight: .semibold))
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(clientMode == mode ? .white : .primary)
+                                .frame(maxWidth: .infinity, minHeight: 44)
+                                .background(clientMode == mode ? Color.blue : Color(UIColor.systemGray5))
+                        }
+                        .disabled(broadcastManager.isConnected)
                     }
                 }
-                .pickerStyle(SegmentedPickerStyle())
-                .disabled(broadcastManager.isConnected)
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color(UIColor.systemGray4), lineWidth: 1)
+                )
             }
             .padding(.horizontal, 30)
 
