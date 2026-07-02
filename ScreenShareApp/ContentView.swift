@@ -88,7 +88,12 @@ struct ContentView: View {
                             .foregroundColor(.blue)
                             .multilineTextAlignment(.center)
                         
-                        #if os(iOS)
+                        #if targetEnvironment(macCatalyst)
+                        Text("macOS 화면 캡처가 진행 중입니다.")
+                            .font(.headline)
+                            .foregroundColor(.blue)
+                            .padding()
+                        #elseif os(iOS)
                         if ProcessInfo.processInfo.isiOSAppOnMac {
                             Text("macOS 화면 캡처가 진행 중입니다.")
                                 .font(.headline)
