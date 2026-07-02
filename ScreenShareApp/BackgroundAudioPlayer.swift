@@ -8,7 +8,6 @@ import AVFoundation
 
 class BackgroundAudioPlayer {
     static let shared = BackgroundAudioPlayer()
-    
     private let audioEngine = AVAudioEngine()
     private let playerNode = AVAudioPlayerNode()
     
@@ -44,9 +43,9 @@ class BackgroundAudioPlayer {
             playerNode.scheduleBuffer(buffer, at: nil, options: .loops, completionHandler: nil)
             playerNode.play()
             
-            NSLog("✅ [Background] 무음 오디오 재생 시작 (백그라운드 모드 활성화)")
+            NSLog("✅ [BackgroundAudio] 무음 오디오 재생 시작 (백그라운드 모드 활성화)")
         } catch {
-            NSLog("❌ [Background] 오디오 세션 초기화 실패: \(error.localizedDescription)")
+            NSLog("❌ [BackgroundAudio] 오디오 세션 초기화 실패: \(error.localizedDescription)")
         }
     }
     

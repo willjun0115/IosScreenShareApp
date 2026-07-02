@@ -7,9 +7,11 @@ import WebRTC
 import SocketIO
 
 // <KAU> sdp 협상 프로토콜 모드를 정의
-enum RTCClientMode {
-    case broadcasterAsOfferer  // 송출자가 Offerer인 구조
-    case viewerAsOfferer       // 수신자가 Offerer인 구조
+enum RTCClientMode: String, CaseIterable, Identifiable {
+    case broadcasterAsOfferer = "송출자가 Offerer (Broadcaster)"
+    case viewerAsOfferer = "수신자가 Offerer (Viewer)"
+    
+    var id: String { self.rawValue }
 }
 
 class WebRTCManager: NSObject {

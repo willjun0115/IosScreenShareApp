@@ -2,8 +2,6 @@
 //  BroadcastPickerView.swift
 //  ScreenShareApp
 //
-//  Created by supercoder on 4/8/26.
-//
 
 import SwiftUI
 import ReplayKit
@@ -14,7 +12,6 @@ struct BroadcastPickerView: UIViewRepresentable {
         let picker = RPSystemBroadcastPickerView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
         
         picker.preferredExtension = "com.will115.ScreenShareApp.ScreenShareExt"
-        
         picker.showsMicrophoneButton = true
         return picker
     }

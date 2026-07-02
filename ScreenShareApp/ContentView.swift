@@ -14,6 +14,9 @@ struct ContentView: View {
     
     // 현재 선택된 공유 모드를 추적하는 상태 변수
     @State private var currentSource: captureSource? = nil
+    
+    // SDP 협상 구조(Mode)를 선택하는 상태 변수
+    @State private var clientMode: RTCClientMode = .broadcasterAsOfferer
 
     var body: some View {
         VStack(spacing: 40) {
@@ -35,6 +38,19 @@ struct ContentView: View {
                     .disableAutocorrection(true)
                     .focused($isInputActive)
                     .disabled(broadcastManager.isConnected) // 연결 중엔 수정 불가
+                
+                Text("협상 모드 (SDP)")
+                    .font(.headline)
+                    .foregroundColor(.gray)
+                    .padding(.top, 10)
+                
+                Picker("협상 모드", selection: $clientMode) {
+                    ForEach(RTCClientMode.allCases) { mode in
+                        Text(mode.rawValue).tag(mode)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .disabled(broadcastManager.isConnected)
             }
             .padding(.horizontal, 30)
 
@@ -116,7 +132,7 @@ struct ContentView: View {
                     Button(action: {
                         isInputActive = false
                         currentSource = .screen
-                        broadcastManager.startStreaming(source: .screen, roomID: roomID)
+                        broadcastManager.startStreaming(source: .screen, roomID: roomID, mode: clientMode)
                     }) {
                         Text("화면 공유 시작")
                             .foregroundColor(.white)
@@ -129,7 +145,7 @@ struct ContentView: View {
                     Button(action: {
                         isInputActive = false
                         currentSource = .camera
-                        broadcastManager.startStreaming(source: .camera, roomID: roomID)
+                        broadcastManager.startStreaming(source: .camera, roomID: roomID, mode: clientMode)
                     }) {
                         Text("카메라 공유 시작")
                             .foregroundColor(.white)
@@ -143,7 +159,7 @@ struct ContentView: View {
                         isInputActive = false
                         currentSource = nil // 시청자는 로컬 캡처 소스가 없음을 명시
                         // 캡처 파이프라인을 건너뛰고 서버 연결(Socket)만 시작합니다.
-                        broadcastManager.startConnection(roomID: roomID)
+                        broadcastManager.startConnection(roomID: roomID, mode: clientMode)
                     }) {
                         Text("방송 시청하기")
                             .foregroundColor(.white)
