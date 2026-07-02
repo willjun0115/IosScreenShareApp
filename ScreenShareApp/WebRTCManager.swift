@@ -76,7 +76,7 @@ class WebRTCManager: NSObject {
                 
         if currentMode == .viewerAsOfferer {
             // 송신자이므로 내 화면(로컬 비디오 트랙)을 PC에 추가
-            let sender = newPc.add(self.videoTrack, streamIds: ["stream0"])
+            guard let sender = newPc.add(self.videoTrack, streamIds: ["stream0"]) else {return}
             
             // 네트워크 상태에 따른 해상도 자동 저하(BWE)를 막기 위해 해상도 유지(Maintain Resolution) 강제 적용
             let parameters = sender.parameters
@@ -267,7 +267,7 @@ class WebRTCManager: NSObject {
         guard let newPc = factory.peerConnection(with: config, constraints: constraints, delegate: self) else { return }
         
         // 송출자이므로 내 화면/카메라 트랙을 추가합니다.
-        let sender = newPc.add(self.videoTrack, streamIds: ["stream0"])
+        guard let sender = newPc.add(self.videoTrack, streamIds: ["stream0"]) else {return}
         let parameters = sender.parameters
         parameters.degradationPreference = NSNumber(value: RTCDegradationPreference.maintainResolution.rawValue)
         sender.parameters = parameters

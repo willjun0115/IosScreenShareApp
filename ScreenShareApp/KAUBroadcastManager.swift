@@ -86,8 +86,13 @@ class KAUBroadcastManager: ObservableObject {
         }
     }
     
+<<<<<<< HEAD
     func startConnection(roomID: String, mode: RTCClientMode = .broadcasterAsOfferer) {
         let serverURL = URL(string: "https://192.168.1.62:8000")!
+=======
+    func startConnection(roomID: String) {
+        let serverURL = URL(string: "https://192.168.0.5:8000")!
+>>>>>>> 835c90c13002b16854a3a969c0353bdeb6e9e679
         socketManager = SocketManager(socketURL: serverURL, config: [
             .log(false),
             .forceWebsockets(true),
@@ -98,7 +103,11 @@ class KAUBroadcastManager: ObservableObject {
         socket = socketManager?.defaultSocket
         BackgroundAudioPlayer.shared.start()
         
+<<<<<<< HEAD
         rtcManager = WebRTCManager(socket: socket!, mode: mode)
+=======
+        rtcManager = WebRTCManager(socket: socket!, mode: .viewerAsOfferer)
+>>>>>>> 835c90c13002b16854a3a969c0353bdeb6e9e679
         
         rtcManager?.onRemoteVideoTrackReceived = { [weak self] track in
             self?.remoteVideoTrack = track
