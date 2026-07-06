@@ -660,7 +660,7 @@ class SystemResourceMonitor {
         }
         
         var totalCPU: Double = 0.0
-        let THREAD_FLAGS_IDLE = 4
+        let THREAD_FLAGS_IDLE: integer_t = 4
         
         for i in 0..<Int(threadCount) {
             var threadInfo = thread_basic_info()
