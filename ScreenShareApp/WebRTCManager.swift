@@ -5,6 +5,8 @@
 
 import WebRTC
 import SocketIO
+import Foundation
+import Darwin
 
 // <KAU> sdp 협상 프로토콜 모드를 정의
 enum RTCClientMode: String, CaseIterable, Identifiable {
@@ -650,7 +652,7 @@ class SystemResourceMonitor {
         var threadCount: mach_msg_type_number_t = 0
         
         let kernReturn = withUnsafeMutablePointer(to: &threadList) {
-            thread_self_acts(mach_task_self_, $0, &threadCount)
+            task_threads(mach_task_self_, $0, &threadCount)
         }
         
         guard kernReturn == KERN_SUCCESS, let threads = threadList else {
@@ -658,6 +660,7 @@ class SystemResourceMonitor {
         }
         
         var totalCPU: Double = 0.0
+        let THREAD_FLAGS_IDLE = 4
         
         for i in 0..<Int(threadCount) {
             var threadInfo = thread_basic_info()
