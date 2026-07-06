@@ -1,0 +1,4 @@
+# WebRTC statistics files
+stats/
+webrtc_stats_*.json
+webrtc_stats_*_report.html

@@ -82,7 +82,7 @@ class KAUMasterEncoder {
         if shouldForceKeyframe {
             modifiedFrameTypes = [NSNumber(value: RTCFrameType.videoFrameKey.rawValue)]
             lastKeyframeTimestampNs[key] = nowNs
-            NSLog("🔑 [Multiplexer] 주기적 I-Frame 강제 생성 (Key: \(key))")
+            // NSLog("🔑 [Multiplexer] 주기적 I-Frame 강제 생성 (Key: \(key))")
         } else {
             // 외부(Peer)에서 들어온 I-frame 요청(PLI/FIR)을 무시하고 항상 Delta 프레임으로 처리
             modifiedFrameTypes = [NSNumber(value: RTCFrameType.videoFrameDelta.rawValue)]
