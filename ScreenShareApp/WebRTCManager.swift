@@ -24,6 +24,7 @@ class WebRTCManager: NSObject {
     private var videoCapturer: RTCVideoCapturer?
     var onRemoteVideoTrackReceived: ((RTCVideoTrack) -> Void)?
     let currentMode: RTCClientMode
+    private var statsTimer: Timer?
     
     init(socket: SocketIOClient, mode: RTCClientMode = .broadcasterAsOfferer) {
         self.socket = socket
@@ -49,6 +50,11 @@ class WebRTCManager: NSObject {
         self.videoCapturer = RTCVideoCapturer(delegate: self.videoSource)
         self.videoTrack = factory.videoTrack(with: videoSource, trackId: "video0")
         super.init()
+        startStatsTimer()
+    }
+    
+    deinit {
+        statsTimer?.invalidate()
     }
     
     func handleOffer(from peerId: String, sdp: String) {
@@ -456,4 +462,156 @@ extension WebRTCManager: RTCPeerConnectionDelegate {
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceGatheringState) {}
     func peerConnection(_ peerConnection: RTCPeerConnection, didRemove candidates: [RTCIceCandidate]) {}
     func peerConnection(_ peerConnection: RTCPeerConnection, didOpen dataChannel: RTCDataChannel) {}
+}
+
+// MARK: - WebRTC Statistics Collection
+extension WebRTCManager {
+    private func startStatsTimer() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.statsTimer?.invalidate()
+            self.statsTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
+                self?.collectStatistics()
+            }
+            NSLog("📊 [Stats] Statistics collection timer started (10s interval)")
+        }
+    }
+    
+    private func collectStatistics() {
+        let activeConnections = self.peerConnections
+        guard !activeConnections.isEmpty else { return }
+        
+        for (peerId, pc) in activeConnections {
+            pc.statistics { [weak self] report in
+                let codableReport = CodableStatisticsReport(from: report)
+                self?.saveStatsReport(codableReport, for: peerId)
+            }
+        }
+    }
+    
+    private func getStatsFileURL(for peerId: String) -> URL {
+        let fileManager = FileManager.default
+        let urls = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
+        let documentsDirectory = urls[0]
+        return documentsDirectory.appendingPathComponent("webrtc_stats_\(peerId).json")
+    }
+    
+    private func saveStatsReport(_ codableReport: CodableStatisticsReport, for peerId: String) {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            guard let self = self else { return }
+            let fileURL = self.getStatsFileURL(for: peerId)
+            
+            var reports: [CodableStatisticsReport] = []
+            if let data = try? Data(contentsOf: fileURL) {
+                if let decoded = try? JSONDecoder().decode([CodableStatisticsReport].self, from: data) {
+                    reports = decoded
+                }
+            }
+            
+            reports.append(codableReport)
+            
+            do {
+                let encoder = JSONEncoder()
+                encoder.outputFormatting = .prettyPrinted
+                let data = try encoder.encode(reports)
+                try data.write(to: fileURL, options: .atomic)
+                NSLog("📊 [Stats] Saved stats for \(peerId) to \(fileURL.path) (total points: \(reports.count))")
+            } catch {
+                NSLog("❌ [Stats] Error saving stats for peer \(peerId): \(error)")
+            }
+        }
+    }
+}
+
+// MARK: - Codable WebRTC Statistics Models
+enum CodableValue: Codable {
+    case string(String)
+    case number(Double)
+    case array([CodableValue])
+    case dictionary([String: Double])
+    
+    init?(from object: NSObject) {
+        if let str = object as? String {
+            self = .string(str)
+        } else if let num = object as? NSNumber {
+            self = .number(num.doubleValue)
+        } else if let arr = object as? [NSObject] {
+            var codableArr: [CodableValue] = []
+            for item in arr {
+                if let val = CodableValue(from: item) {
+                    codableArr.append(val)
+                }
+            }
+            self = .array(codableArr)
+        } else if let dict = object as? [String: NSNumber] {
+            var codableDict: [String: Double] = [:]
+            for (k, v) in dict {
+                codableDict[k] = v.doubleValue
+            }
+            self = .dictionary(codableDict)
+        } else {
+            return nil
+        }
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .string(let val):
+            try container.encode(val)
+        case .number(let val):
+            try container.encode(val)
+        case .array(let val):
+            try container.encode(val)
+        case .dictionary(let val):
+            try container.encode(val)
+        }
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let val = try? container.decode(String.self) {
+            self = .string(val)
+        } else if let val = try? container.decode(Double.self) {
+            self = .number(val)
+        } else if let val = try? container.decode([CodableValue].self) {
+            self = .array(val)
+        } else if let val = try? container.decode([String: Double].self) {
+            self = .dictionary(val)
+        } else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unable to decode CodableValue")
+        }
+    }
+}
+
+struct CodableStatistics: Codable {
+    let id: String
+    let timestampUs: Double
+    let type: String
+    let values: [String: CodableValue]
+}
+
+struct CodableStatisticsReport: Codable {
+    let timestampUs: Double
+    let statistics: [String: CodableStatistics]
+    
+    init(from report: RTCStatisticsReport) {
+        self.timestampUs = report.timestamp_us
+        var codableStats: [String: CodableStatistics] = [:]
+        for (key, stats) in report.statistics {
+            var codableValues: [String: CodableValue] = [:]
+            for (valKey, valObj) in stats.values {
+                if let codableVal = CodableValue(from: valObj) {
+                    codableValues[valKey] = codableVal
+                }
+            }
+            codableStats[key] = CodableStatistics(
+                id: stats.id,
+                timestampUs: stats.timestamp_us,
+                type: stats.type,
+                values: codableValues
+            )
+        }
+        self.statistics = codableStats
+    }
 }
