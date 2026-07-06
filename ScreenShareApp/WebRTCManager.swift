@@ -472,10 +472,10 @@ extension WebRTCManager {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.statsTimer?.invalidate()
-            self.statsTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
+            self.statsTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
                 self?.collectStatistics()
             }
-            NSLog("📊 [Stats] Statistics collection timer started (10s interval)")
+            NSLog("📊 [Stats] Statistics collection timer started (5s interval)")
         }
     }
     
