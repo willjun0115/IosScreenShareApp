@@ -87,7 +87,7 @@ class KAUBroadcastManager: ObservableObject {
     }
     
     func startConnection(roomID: String, mode: RTCClientMode = .broadcasterAsOfferer) {
-        let serverURL = URL(string: "https://192.168.1.5:8000")!
+        let serverURL = URL(string: "https://192.168.1.62:8000")!
         socketManager = SocketManager(socketURL: serverURL, config: [
             .log(false),
             .forceWebsockets(true),
