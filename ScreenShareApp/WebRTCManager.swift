@@ -481,9 +481,13 @@ extension WebRTCManager {
         let activeConnections = self.peerConnections
         guard !activeConnections.isEmpty else { return }
         
+        // Measure CPU and Memory usage
+        let cpu = SystemResourceMonitor.getCPUUsage()
+        let memory = SystemResourceMonitor.getMemoryUsage()
+        
         for (peerId, pc) in activeConnections {
             pc.statistics { [weak self] report in
-                let codableReport = CodableStatisticsReport(from: report)
+                let codableReport = CodableStatisticsReport(from: report, cpu: cpu, memory: memory)
                 self?.saveStatsReport(codableReport, for: peerId)
             }
         }
@@ -594,9 +598,13 @@ struct CodableStatistics: Codable {
 struct CodableStatisticsReport: Codable {
     let timestampUs: Double
     let statistics: [String: CodableStatistics]
+    let cpuUsage: Double?
+    let memoryUsage: Double?
     
-    init(from report: RTCStatisticsReport) {
+    init(from report: RTCStatisticsReport, cpu: Double? = nil, memory: Double? = nil) {
         self.timestampUs = report.timestamp_us
+        self.cpuUsage = cpu
+        self.memoryUsage = memory
         var codableStats: [String: CodableStatistics] = [:]
         for (key, stats) in report.statistics {
             var codableValues: [String: CodableValue] = [:]
@@ -613,5 +621,64 @@ struct CodableStatisticsReport: Codable {
             )
         }
         self.statistics = codableStats
+    }
+}
+
+// MARK: - System Resource Monitor Helper
+class SystemResourceMonitor {
+    // Returns current app memory usage in MB
+    static func getMemoryUsage() -> Double {
+        var taskInfo = mach_task_basic_info()
+        var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size) / 4
+        
+        let kerr: kern_return_t = withUnsafeMutablePointer(to: &taskInfo) {
+            $0.withMemoryRebound(to: integer_t.self, capacity: Int(count)) {
+                task_info(mach_task_self_, task_flavor_t(MACH_TASK_BASIC_INFO), $0, &count)
+            }
+        }
+        
+        if kerr == KERN_SUCCESS {
+            return Double(taskInfo.resident_size) / 1024.0 / 1024.0 // Convert bytes to MB
+        } else {
+            return 0.0
+        }
+    }
+    
+    // Returns current app CPU usage in %
+    static func getCPUUsage() -> Double {
+        var threadList: thread_act_array_t?
+        var threadCount: mach_msg_type_number_t = 0
+        
+        let kernReturn = withUnsafeMutablePointer(to: &threadList) {
+            thread_self_acts(mach_task_self_, $0, &threadCount)
+        }
+        
+        guard kernReturn == KERN_SUCCESS, let threads = threadList else {
+            return 0.0
+        }
+        
+        var totalCPU: Double = 0.0
+        
+        for i in 0..<Int(threadCount) {
+            var threadInfo = thread_basic_info()
+            var threadInfoCount = mach_msg_type_number_t(MemoryLayout<thread_basic_info>.size / MemoryLayout<integer_t>.size)
+            
+            let infoReturn = withUnsafeMutablePointer(to: &threadInfo) {
+                $0.withMemoryRebound(to: integer_t.self, capacity: Int(threadInfoCount)) {
+                    thread_info(threads[i], thread_flavor_t(THREAD_BASIC_INFO), $0, &threadInfoCount)
+                }
+            }
+            
+            if infoReturn == KERN_SUCCESS {
+                if (threadInfo.flags & THREAD_FLAGS_IDLE) == 0 {
+                    totalCPU += Double(threadInfo.cpu_usage) / Double(TH_USAGE_SCALE) * 100.0
+                }
+            }
+        }
+        
+        // Free thread list memory
+        vm_deallocate(mach_task_self_, vm_address_t(Int(bitPattern: threadList)), vm_size_t(threadCount * mach_msg_type_number_t(MemoryLayout<thread_t>.size)))
+        
+        return totalCPU
     }
 }
