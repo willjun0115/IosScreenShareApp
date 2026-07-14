@@ -1,12 +1,12 @@
-# 📱 iOS & macOS WebRTC Screen Share Application
+# iOS & macOS WebRTC Screen Share Application
 
-WebRTC 프로토콜을 활용하여 iOS 및 macOS(Mac Catalyst) 환경에서 실시간으로 화면 및 카메라 스트림을 공유하고 시청할 수 있는 멀티플랫폼 클라이언트 애플리케이션입니다.
+WebRTC 프로토콜을 활용하여 iOS 및 macOS(Mac Catalyst) 환경에서 실시간으로 화면 및 카메라 스트림을 공유하고 시청할 수 있는 클라이언트 애플리케이션입니다.
 
 1:N 다중 연결 송출 환경에서 CPU/메모리 자원 소모를 최소화하기 위한 **공유 인코더 프레임워크**와 상황별 연결 대응을 위한 **SDP 하이브리드 협상 제어**, 그리고 실시간 **성능 & 디바이스 자원 텔레메트리** 기능이 탑재되어 있습니다.
 
 ---
 
-## 🛠️ 시스템 요구사양
+## 시스템 요구사양
 
 - **개발 언어**: Swift (iOS / Mac Catalyst)
 - **개발 도구**: Xcode 14.0 이상, CocoaPods
@@ -16,22 +16,22 @@ WebRTC 프로토콜을 활용하여 iOS 및 macOS(Mac Catalyst) 환경에서 실
 - **주요 외부 라이브러리**:
   - WebRTC: `WebRTC-SDK`
   - Signaling: `Socket.IO-Client-Swift`
-- **시그널링 서버**: 
+- **시그널링 서버**: Node.js 기반 서버
 
 ---
 
-## 📂 프로젝트 폴더 구조
+## 프로젝트 폴더 구조
 
 ```text
 IosScreenShareApp/
-├── ScreenShareApp/               # 메인 iOS 애플리케이션 프로젝트 소스
-│   ├── ContentView.swift         # 메인 SwiftUI 인터페이스 (방 번호, 모드, 화면 제어)
+├── ScreenShareApp/               # 메인 앱 프로젝트 소스
+│   ├── ContentView.swift         # 메인 SwiftUI 인터페이스
 │   ├── KAUBroadcastManager.swift # 소켓 시그널링 통신 및 미디어 파이프라인 조율
 │   ├── WebRTCManager.swift       # RTCPeerConnection 생성, SDP/ICE 조율 및 리소스 모니터 엔진
-│   ├── KAUMasterEncoder.swift    # 실 물리 인코더 관리 및 프레임 분배 Multiplexer
-│   ├── KAUProxyEncoder.swift     # WebRTC 비디오 엔진에 등록되는 가상 인터셉터 인코더
+│   ├── KAUMasterEncoder.swift    # 실제(마스터) 인코더 관리 및 프레임 분배 Multiplexer
+│   ├── KAUProxyEncoder.swift     # WebRTC 비디오 엔진에 등록되는 가상(프록시) 인코더
 │   ├── KAUFrameReceiver.swift    # App Group 공유 메모리(mmap) 수신 및 WebRTC 바인딩 폴링 루프
-│   ├── KAUMacScreenCapturer.swift# macOS Catalyst용 ScreenCaptureKit 기반 캡처러
+│   ├── KAUMacScreenCapturer.swift# macOS 용 ScreenCaptureKit 기반 캡처 모듈
 │   ├── BackgroundAudioPlayer.swift# 백그라운드 생존을 위한 무음 오디오 재생 모듈
 │   └── SharedContext.swift       # 프로세스 간 공유 메모리 파일 및 구조체 정의
 │
@@ -46,7 +46,7 @@ IosScreenShareApp/
 
 ---
 
-## 🚀 실행 및 연동 방법
+## 실행 방법
 
 ### 1. 시그널링 서버 구동
 본 클라이언트와 연동할 시그널링 서버(`peer_ts`) 저장소에서 의존성을 빌드하고 먼저 실행합니다.
@@ -64,7 +64,7 @@ pod install
 ```
 설치가 완료되면 Xcode에서 `ScreenShareApp.xcworkspace` 파일을 엽니다.
 
-### 3. Xcode 설정 및 빌드 (실제 기기 테스트 필수 과정)
+### 3. Xcode 설정 및 빌드
 iOS 기기에서 전체 화면 공유(Broadcast Extension)가 작동하려면 **App Group** 및 **Apple Developer 계정 프로비저닝** 설정이 필요합니다.
 
 1. **App Group 생성 및 매핑**:
@@ -77,7 +77,7 @@ iOS 기기에서 전체 화면 공유(Broadcast Extension)가 작동하려면 **
 
 ---
 
-## 📊 QoS 성능 리포트 분석 도구 활용
+## 성능 리포트 분석 도구 활용
 
 수집된 자원 및 성능 덤프 JSON 파일을 통해 분석 리포트 그래프(HTML)를 그리는 방법입니다.
 
