@@ -50,7 +50,7 @@
 
 ### 3) SDP 모드 제어 (SDP Mode Control)
 * **하이브리드 협상 주도권 (`RTCClientMode`)**: 네트워크 토폴로지 및 방화벽 환경에 유연하게 대처하기 위해 송신자와 수신자 중 누가 SDP Offer를 먼저 제안할지 결정하는 협상 모드를 전환할 수 있다.
-* **송출자 오퍼 (Broadcaster as Offerer)**: 송출 기기가 화면 스트림의 코덱 및 미디어 명세를 담은 Offer SDP를 생성하여 시그널링 소켓으로 전달하는 정석 구조이다.
+* **송출자 오퍼 (Broadcaster as Offerer)**: 송출 기기가 화면 스트림의 코덱 및 미디어 명세를 담은 Offer SDP를 생성하여 시그널링 소켓으로 전달하는 구조이다.
 * **수신자 오퍼 (Viewer as Offerer)**: 네트워크 방화벽이 강하게 걸려 있는 수신 측(Viewer)이 먼저 Offer SDP를 생성하여 터널을 개방하고, 송출 기기가 이에 응답(Answer SDP)하여 비디오 트랙을 맵핑하는 구조이다.
 
 ### 4) 통계 텔레메트리 (Statistics Telemetry)
