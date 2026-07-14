@@ -1,4 +1,4 @@
-# iOS & macOS WebRTC Screen Share Application
+# iOS & macOS WebRTC Screen Share App
 
 WebRTC 프로토콜을 활용하여 iOS 및 macOS(Mac Catalyst) 환경에서 실시간으로 화면 및 카메라 스트림을 공유하고 시청할 수 있는 클라이언트 애플리케이션입니다.
 
@@ -40,7 +40,6 @@ IosScreenShareApp/
 │
 ├── Podfile                       # CocoaPods 의존성 설정 파일
 ├── analyze_stats.js              # QoS & 자원 계측 JSON 분석 및 시각화 리포트 생성 스크립트
-├── DEVELOPMENT_LOG.md            # 단계별 상세 개발 내용 및 히스토리 로그
 └── README.md                     # 본 프로젝트 매뉴얼 문서
 ```
 
@@ -49,9 +48,9 @@ IosScreenShareApp/
 ## 실행 방법
 
 ### 1. 시그널링 서버 구동
-본 클라이언트와 연동할 시그널링 서버(`peer_ts`) 저장소에서 의존성을 빌드하고 먼저 실행합니다.
+본 클라이언트와 연동할 시그널링 서버 저장소에서 의존성을 빌드하고 먼저 실행합니다.
 ```bash
-# peer_ts 프로젝트 루트
+# 시그널링 서버 프로젝트 루트
 npm install
 npm start
 ```
