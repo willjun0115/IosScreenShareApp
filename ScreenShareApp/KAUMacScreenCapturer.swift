@@ -21,13 +21,13 @@ class KAUMacScreenCapturer: NSObject, SCStreamOutput {
         SCShareableContent.getExcludingDesktopWindows(false, onScreenWindowsOnly: false) { [weak self] content, error in
             guard let self = self else { return }
             guard let content = content, error == nil else {
-                NSLog("❌ [ScreenCaptureKit] 콘텐츠 가져오기 실패: \(String(describing: error))")
+                NSLog("❌ [ScreenCaptureKit] Failed to get content: \(String(describing: error))")
                 return
             }
             
             // 첫 번째 디스플레이 캡처
             guard let display = content.displays.first else {
-                NSLog("❌ [ScreenCaptureKit] 디스플레이를 찾을 수 없습니다.")
+                NSLog("❌ [ScreenCaptureKit] Cannot find display.")
                 return
             }
             
@@ -45,9 +45,9 @@ class KAUMacScreenCapturer: NSObject, SCStreamOutput {
             
             self.stream?.startCapture { error in
                 if let error = error {
-                    NSLog("❌ [ScreenCaptureKit] 캡처 시작 실패: \(error)")
+                    NSLog("❌ [ScreenCaptureKit] Failed to start capture: \(error)")
                 } else {
-                    NSLog("✅ [ScreenCaptureKit] 캡처 시작 성공")
+                    NSLog("✅ [ScreenCaptureKit] Screen Capture started.")
                 }
             }
         }
@@ -56,9 +56,9 @@ class KAUMacScreenCapturer: NSObject, SCStreamOutput {
     func stopCapture() {
         stream?.stopCapture { error in
             if let error = error {
-                NSLog("❌ [ScreenCaptureKit] 캡처 중지 실패: \(error)")
+                NSLog("❌ [ScreenCaptureKit] Failed to stop capture: \(error)")
             } else {
-                NSLog("✅ [ScreenCaptureKit] 캡처 중지 성공")
+                NSLog("✅ [ScreenCaptureKit] Screen Capture stopped.")
             }
         }
         stream = nil

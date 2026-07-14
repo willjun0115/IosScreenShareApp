@@ -8,7 +8,7 @@ import SocketIO
 import Foundation
 import Darwin
 
-// <KAU> sdp 협상 프로토콜 모드를 정의
+// sdp 협상 프로토콜 모드를 정의
 enum RTCClientMode: String, CaseIterable, Identifiable {
     case broadcasterAsOfferer = "송출자가 Offerer (Broadcaster)"
     case viewerAsOfferer = "수신자가 Offerer (Viewer)"
@@ -83,22 +83,21 @@ class WebRTCManager: NSObject {
         guard let newPc = factory.peerConnection(with: config, constraints: constraints, delegate: self) else { return }
                 
         if currentMode == .viewerAsOfferer {
-            // 송신자이므로 내 화면(로컬 비디오 트랙)을 PC에 추가
+            // 내 화면(로컬 비디오 트랙)을 PC에 추가
             guard let sender = newPc.add(self.videoTrack, streamIds: ["stream0"]) else {return}
             
-            // 네트워크 상태에 따른 해상도 자동 저하(BWE)를 막기 위해 해상도 유지(Maintain Resolution) 강제 적용
+            // 해상도 자동 저하(BWE)를 막기 위해 해상도 유지(Maintain Resolution) 강제 적용
             let parameters = sender.parameters
             parameters.degradationPreference = NSNumber(value: RTCDegradationPreference.maintainResolution.rawValue)
             sender.parameters = parameters
         }
-        // 수신자의 경우 Offer 수신 시 자동 생성되므로 addTransceiver 불필요
         
         self.peerConnections[peerId] = newPc
         
         let remoteSdp = RTCSessionDescription(type: .offer, sdp: sdp)
         newPc.setRemoteDescription(remoteSdp) { [weak self, weak newPc] error in
             guard error == nil else {
-                NSLog("❌ [\(peerId)] Remote Description 에러: \(String(describing: error))")
+                NSLog("❌ [\(peerId)] Remote Description Error: \(String(describing: error))")
                 return
             }
             
@@ -121,96 +120,6 @@ class WebRTCManager: NSObject {
             }
         }
     }
-    
-    // 시청자로부터 Offer 수신 시 해당 시청자 전용 PC를 생성하고 Answer 응답
-//    func handleOffer(from peerId: String, sdp: String) {
-//        let config = RTCConfiguration()
-//        config.iceServers = [RTCIceServer(urlStrings: ["stun:stun.l.google.com:19302"])]
-//        let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
-//        
-//        let newPc = factory.peerConnection(with: config, constraints: constraints, delegate: self)
-//        
-//        // 내 화면 트랙 추가
-//        newPc.add(self.videoTrack, streamIds: ["stream0"])
-//        self.peerConnections[peerId] = newPc
-//        
-//        let remoteSdp = RTCSessionDescription(type: .offer, sdp: sdp)
-//        newPc.setRemoteDescription(remoteSdp) { [weak self, weak newPc] error in
-//            guard error == nil else {
-//                NSLog("❌ [\(peerId)] Remote Description 에러: \(String(describing: error))")
-//                return
-//            }
-//            
-//            newPc?.answer(for: constraints) { (answerSdp, answerError) in
-//                guard let answerSdp = answerSdp else { return }
-//                
-//                // answer sdp 코덱 우선순위 편집
-//                let modifiedSdpString = self?.preferCodec(in: answerSdp.sdp, codecName: "H264") ?? answerSdp.sdp
-//                let modifiedSdp = RTCSessionDescription(type: answerSdp.type, sdp: modifiedSdpString)
-//                
-//                newPc?.setLocalDescription(modifiedSdp) { _ in
-//                    
-//                    let payload: [String: Any] = [
-//                        "to": peerId,
-//                        "data": [
-//                            "type": "answer",
-//                            "sdp": modifiedSdp.sdp
-//                        ]
-//                    ]
-//                    self?.socket.emit("answer", payload)
-//                }
-//            }
-//        }
-//    }
-    
-//    func handleOffer(from peerId: String, sdp: String) {
-//        let config = RTCConfiguration()
-//        config.iceServers = [RTCIceServer(urlStrings: ["stun:stun.l.google.com:19302"])]
-//        config.sdpSemantics = .unifiedPlan
-//        
-//        // 수신 전용(recvonly) 제약 조건
-//        let constraints = RTCMediaConstraints(
-//            mandatoryConstraints: [
-//                kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueTrue,
-//                kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue
-//            ],
-//            optionalConstraints: nil
-//        )
-//        
-//        guard let newPc = factory.peerConnection(with: config, constraints: constraints, delegate: self) else { return }
-//        
-//        // 수신자이므로 수신 전용 트랜시버로 방향을 고정합니다. (로컬 트랙 추가 안 함)
-//        newPc.addTransceiver(of: .video)!.setDirection(.recvOnly, error: nil)
-//        newPc.addTransceiver(of: .audio)!.setDirection(.recvOnly, error: nil)
-//        
-//        self.peerConnections[peerId] = newPc
-//        
-//        let remoteSdp = RTCSessionDescription(type: .offer, sdp: sdp)
-//        newPc.setRemoteDescription(remoteSdp) { [weak self, weak newPc] error in
-//            guard error == nil else {
-//                NSLog("❌ [\(peerId)] Remote Description 에러: \(String(describing: error))")
-//                return
-//            }
-//            
-//            newPc?.answer(for: constraints) { (answerSdp, answerError) in
-//                guard let answerSdp = answerSdp else { return }
-//                
-//                // let modifiedSdpString = self?.preferCodec(in: answerSdp.sdp, codecName: "H264") ?? answerSdp.sdp
-//                // let modifiedSdp = RTCSessionDescription(type: answerSdp.type, sdp: modifiedSdpString)
-//                
-//                newPc?.setLocalDescription(answerSdp) { _ in
-//                    let payload: [String: Any] = [
-//                        "to": peerId,
-//                        "data": [
-//                            "type": "answer",
-//                            "sdp": answerSdp.sdp
-//                        ]
-//                    ]
-//                    self?.socket.emit("answer", payload)
-//                }
-//            }
-//        }
-//    }
     
     func createReceiverConnection(to parentId: String) {
         guard currentMode == .viewerAsOfferer else {
@@ -241,7 +150,7 @@ class WebRTCManager: NSObject {
         
         newPc.offer(for: constraints) { [weak self, weak newPc] (sdp, error) in
             guard let sdp = sdp else {
-                NSLog("❌ Offer 생성 실패: \(String(describing: error))")
+                NSLog("❌ Failed to create Offer: \(String(describing: error))")
                 return
             }
             
@@ -274,7 +183,7 @@ class WebRTCManager: NSObject {
         
         guard let newPc = factory.peerConnection(with: config, constraints: constraints, delegate: self) else { return }
         
-        // 송출자이므로 내 화면/카메라 트랙을 추가합니다.
+        // 내 화면/카메라 트랙을 추가
         guard let sender = newPc.add(self.videoTrack, streamIds: ["stream0"]) else {return}
         let parameters = sender.parameters
         parameters.degradationPreference = NSNumber(value: RTCDegradationPreference.maintainResolution.rawValue)
@@ -283,11 +192,11 @@ class WebRTCManager: NSObject {
         
         newPc.offer(for: constraints) { [weak self, weak newPc] (sdp, error) in
             guard let sdp = sdp else {
-                NSLog("❌ Offer 생성 실패: \(String(describing: error))")
+                NSLog("❌ Failed to create Offer: \(String(describing: error))")
                 return
             }
             
-            // sdp 코덱 우선순위 편집 (H264)
+            // sdp 코덱 우선순위 편집
             // let modifiedSdpString = self?.preferCodec(in: sdp.sdp, codecName: "H264") ?? sdp.sdp
             // let modifiedSdp = RTCSessionDescription(type: sdp.type, sdp: modifiedSdpString)
             
@@ -310,9 +219,9 @@ class WebRTCManager: NSObject {
         
         pc.setRemoteDescription(remoteSdp) { error in
             if let error = error {
-                NSLog("❌ [\(peerId)] Remote Description Answer 에러: \(error)")
+                NSLog("❌ [\(peerId)] Remote Description Answer Error: \(error)")
             } else {
-                NSLog("✅ [\(peerId)] Answer 설정 완료 (시청 파이프라인 개통)")
+                NSLog("✅ [\(peerId)] success to set Answer sdp.")
             }
         }
     }
@@ -320,7 +229,7 @@ class WebRTCManager: NSObject {
     // 뷰어의 ICE Candidate 처리
     func handleCandidate(from peerId: String, candidateDict: [String: Any]) {
         guard let pc = peerConnections[peerId] else {
-            NSLog("⚠️ [\(peerId)] PC를 찾을 수 없어 Candidate를 무시합니다.")
+            NSLog("⚠️ [\(peerId)] Cannot find PC. Disregard Candidate.")
             return
         }
         
@@ -410,7 +319,7 @@ extension WebRTCManager: RTCPeerConnectionDelegate {
     func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
         guard let peerId = peerConnections.first(where: { $0.value == peerConnection })?.key else { return }
         
-        NSLog("📤 [WebRTC] ICE Candidate 생성됨: \(candidate.sdp) (to: \(peerId))")
+        NSLog("📤 [WebRTC] ICE Candidate created: \(candidate.sdp) (to: \(peerId))")
         
         let candidateDict: [String: Any] = [
             "sdpMLineIndex": candidate.sdpMLineIndex,
@@ -441,7 +350,7 @@ extension WebRTCManager: RTCPeerConnectionDelegate {
                 
                 peerConnection.close()
                 self.peerConnections.removeValue(forKey: peerId)
-                NSLog("⚠️ [\(peerId)] 연결 종료됨. 메인 스레드에서 PC 정리 완료.")
+                NSLog("⚠️ [\(peerId)] Disconnected. PC deleted from main thread.")
             }
         }
     }
@@ -451,7 +360,7 @@ extension WebRTCManager: RTCPeerConnectionDelegate {
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didAdd stream: RTCMediaStream) {
-        NSLog("✅ [WebRTC] 원격 스트림 수신됨: \(stream.streamId)")
+        NSLog("✅ [WebRTC] Remote Stream received: \(stream.streamId)")
         if let videoTrack = stream.videoTracks.first {
             DispatchQueue.main.async { [weak self] in
                 self?.onRemoteVideoTrackReceived?(videoTrack)
@@ -475,7 +384,7 @@ extension WebRTCManager {
             self.statsTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
                 self?.collectStatistics()
             }
-            NSLog("📊 [Stats] Statistics collection timer started (5s interval)")
+            NSLog("📊 [Stats] Statistics collection started")
         }
     }
     
@@ -521,7 +430,7 @@ extension WebRTCManager {
                 encoder.outputFormatting = .prettyPrinted
                 let data = try encoder.encode(reports)
                 try data.write(to: fileURL, options: .atomic)
-                NSLog("📊 [Stats] Saved stats for \(peerId) to \(fileURL.path) (total points: \(reports.count))")
+                // NSLog("📊 [Stats] Saved stats for \(peerId) to \(fileURL.path) (total points: \(reports.count))")
             } catch {
                 NSLog("❌ [Stats] Error saving stats for peer \(peerId): \(error)")
             }
@@ -628,7 +537,7 @@ struct CodableStatisticsReport: Codable {
 
 // MARK: - System Resource Monitor Helper
 class SystemResourceMonitor {
-    // Returns current app memory usage in MB
+    // 현재 메모리 사용량 (MB) 반환
     static func getMemoryUsage() -> Double {
         var taskInfo = mach_task_basic_info()
         var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size) / 4
@@ -646,7 +555,7 @@ class SystemResourceMonitor {
         }
     }
     
-    // Returns current app CPU usage in %
+    // 현재 CPU 사용량 (%) 반환
     static func getCPUUsage() -> Double {
         var threadList: thread_act_array_t?
         var threadCount: mach_msg_type_number_t = 0

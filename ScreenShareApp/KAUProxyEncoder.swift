@@ -18,7 +18,7 @@ class KAUProxyEncoder: NSObject, RTCVideoEncoder {
         return KAUMasterEncoder.shared.implementationName()
     }
     
-    // ✨ 핵심: 마스터가 아직 생성되기 전이므로, 프록시가 WebRTC 엔진의 질문에 직접 하드코딩으로 대답합니다.
+    // 마스터가 아직 생성되기 전이므로, 직접 하드코딩으로 변수 설정
     var resolutionAlignment: Int {
         return codecInfo.name.lowercased() == "h264" ? 1 : 2
     }
@@ -30,7 +30,7 @@ class KAUProxyEncoder: NSObject, RTCVideoEncoder {
     
     func setCallback(_ callback: RTCVideoEncoderCallback?) {
         self.savedCallback = callback
-        // 엔진 가동 중 콜백이 해제(nil)되면 마스터에서도 구독 해제
+        // 엔진 가동 중 콜백이 해제되면 마스터에서도 구독 해제
         if let key = activeEncoderKey {
             if let cb = callback {
                 KAUMasterEncoder.shared.registerCallback(key: key, id: proxyId, callback: cb)
@@ -41,12 +41,10 @@ class KAUProxyEncoder: NSObject, RTCVideoEncoder {
     }
     
     func startEncode(with settings: RTCVideoEncoderSettings, numberOfCores: Int32) -> Int {
-        // ✨ 핵심: 해상도가 변경되더라도 하드웨어 인코더가 무한 증식하는 메모리 누수를 막기 위해,
-        // 코덱 이름만으로 단일 마스터 키를 생성합니다. (해상도 무시)
         let key = "\(codecInfo.name.lowercased())_master"
         self.activeEncoderKey = key
         
-        // 키가 생성되었으므로 대기 중이던 콜백을 마스터에 등록
+        // 대기 중이던 콜백을 마스터에 등록
         if let cb = savedCallback {
             KAUMasterEncoder.shared.registerCallback(key: key, id: proxyId, callback: cb)
         }

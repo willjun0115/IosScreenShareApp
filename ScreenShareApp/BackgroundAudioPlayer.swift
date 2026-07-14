@@ -26,15 +26,14 @@ class BackgroundAudioPlayer {
             
             try audioEngine.start()
             
-            // 무음(Silence) 버퍼 생성
+            // 무음 오디오 버퍼 생성
             guard let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 1024) else { return }
             buffer.frameLength = 1024
             
-            // 버퍼 데이터를 모두 0.0으로 채움 (완벽한 무음)
             if let floatChannelData = buffer.floatChannelData {
                 for channel in 0..<Int(format.channelCount) {
                     for frame in 0..<Int(buffer.frameLength) {
-                        floatChannelData[channel][frame] = 0.0
+                        floatChannelData[channel][frame] = 0.0 // 0.0으로 버퍼 채움
                     }
                 }
             }
@@ -43,9 +42,9 @@ class BackgroundAudioPlayer {
             playerNode.scheduleBuffer(buffer, at: nil, options: .loops, completionHandler: nil)
             playerNode.play()
             
-            NSLog("✅ [BackgroundAudio] 무음 오디오 재생 시작 (백그라운드 모드 활성화)")
+            NSLog("✅ [BackgroundAudio] Slient audio session for audio background mode is started.")
         } catch {
-            NSLog("❌ [BackgroundAudio] 오디오 세션 초기화 실패: \(error.localizedDescription)")
+            NSLog("❌ [BackgroundAudio] Failed to start audio session: \(error.localizedDescription)")
         }
     }
     
@@ -53,6 +52,6 @@ class BackgroundAudioPlayer {
         playerNode.stop()
         audioEngine.stop()
         try? AVAudioSession.sharedInstance().setActive(false)
-        NSLog("🛑 [Background] 무음 오디오 재생 종료")
+        NSLog("🛑 [BackgroundAudio] Audio Session is stopped.")
     }
 }

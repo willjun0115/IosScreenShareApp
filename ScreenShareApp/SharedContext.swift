@@ -2,13 +2,11 @@
 //  SharedContext.swift
 //  ScreenShareApp
 //
-//  Created by supercoder on 5/4/26.
-//
 
 import Foundation
 import CoreVideo
 
-let MAX_FRAME_SIZE = 5_000_000 // 720x1280 NV12 포맷 기준 넉넉한 크기
+let MAX_FRAME_SIZE = 5_000_000
 
 struct SharedFrameBuffer {
     var isReady: Bool        // 프레임 준비 완료 플래그
@@ -22,7 +20,7 @@ struct SharedFrameBuffer {
 }
 
 struct SharedContext {
-    static let appGroupID = "group.com.will115.screenshare" // 본인의 App Group ID
+    static let appGroupID = "group.com.will115.screenshare"
     static let bufferFileName = "video_buffer.dat"
     
     static var bufferFileURL: URL? {

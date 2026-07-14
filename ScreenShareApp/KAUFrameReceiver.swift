@@ -2,8 +2,6 @@
 //  KAUFrameReceiver.swift
 //  ScreenShareApp
 //
-//  Created by supercoder on 5/4/26.
-//
 
 import Foundation
 import CoreVideo
@@ -18,12 +16,10 @@ class KAUReceiver {
     private var rtcManager: WebRTCManager?
     private var pollingTimer: DispatchSourceTimer?
     private let pollingQueue = DispatchQueue(label: "com.will115.screenshare.polling", qos: .userInteractive)
-    
-    // 재사용할 픽셀 버퍼 풀
     private var pixelBufferPool: CVPixelBufferPool?
 
     func startReceiving(rtcManager: WebRTCManager) {
-        // 수신 시작하기 전에 한 번 종료.
+        // 수신 시작하기 전에 초기화
         stopReceiving()
         
         self.rtcManager = rtcManager
@@ -31,8 +27,7 @@ class KAUReceiver {
         
         fileDescriptor = open(fileURL.path, O_RDWR, S_IRUSR | S_IWUSR)
         if fileDescriptor == -1 {
-            NSLog("⚠️ [Frame Receiver] 공유 파일 열기 실패. 아직 익스텐션이 생성하지 않았을 수 있습니다.")
-            // 여기서는 실패하더라도 DisplayLink는 돌려야 익스텐션이 나중에 파일을 만들었을 때 읽을 수 있습니다.
+            NSLog("⚠️ [FrameReceiver] Failed to open shared file. Waiting for creating Broadcast Extension...")
         } else {
             mappedMemory = mmap(nil, mappedSize, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor, 0)
         }
@@ -58,7 +53,7 @@ class KAUReceiver {
                 fileDescriptor = open(fileURL.path, O_RDWR, S_IRUSR | S_IWUSR)
                 if fileDescriptor != -1 {
                     mappedMemory = mmap(nil, mappedSize, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor, 0)
-                    NSLog("✅ [MAIN] 지연된 mmap 성공")
+                    NSLog("✅ [FrameReceiver] Success to open shared memory(mmap)")
                 }
                 return
             }
@@ -106,7 +101,7 @@ class KAUReceiver {
                 
                 // WebRTC 전송
                 rtcManager?.sendPixelBuffer(pb, timeStampNs: headerPtr.pointee.timeStampNs)
-                // NSLog("✅ [MAIN] mmap 프레임 수신 & 전송 완료")
+                // NSLog("✅ [FrameReceiver] Frame sent")
             }
         }
     }

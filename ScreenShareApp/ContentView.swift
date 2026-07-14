@@ -14,8 +14,6 @@ struct ContentView: View {
     
     // 현재 선택된 공유 모드를 추적하는 상태 변수
     @State private var currentSource: captureSource? = nil
-    
-    // SDP 협상 구조(Mode)를 선택하는 상태 변수
     @State private var clientMode: RTCClientMode = .broadcasterAsOfferer
 
     var body: some View {
@@ -69,11 +67,11 @@ struct ContentView: View {
 
             Spacer()
             
-            // 디버깅용 블랙박스 버튼 (유지)
-//            Button("익스텐션 블랙박스 확인") {
+            // 디버깅용 로그 확인 버튼 (필요시 주석 해제)
+//            Button("익스텐션 로그 확인") {
 //                let defaults = UserDefaults(suiteName: "group.com.will115.screenshare")
 //                let logs = defaults?.stringArray(forKey: "ExtLogs") ?? ["로그 없음"]
-//                print("===== 📦 익스텐션 블랙박스 =====")
+//                print("===== 익스텐션 블랙박스 =====")
 //                for log in logs {
 //                    print(log)
 //                }
@@ -91,7 +89,7 @@ struct ContentView: View {
                         
                         RemoteVideoView(videoTrack: remoteTrack)
                             .frame(maxWidth: .infinity)
-                            .frame(height: 300) // 화면 비율에 맞게 높이 조절
+                            .frame(height: 300)
                             .background(Color.black)
                             .cornerRadius(12)
                             .padding(.horizontal, 20)
@@ -101,23 +99,28 @@ struct ContentView: View {
                             .foregroundColor(.blue)
                             .multilineTextAlignment(.center)
                         
+                        // Mac Catalyst 환경으로 앱이 빌드된 경우
                         #if targetEnvironment(macCatalyst)
-                        Text("macOS 화면 캡처가 진행 중입니다.")
+                        Text("화면 캡처가 진행 중입니다. (Mac Catalyst)")
                             .font(.headline)
                             .foregroundColor(.blue)
                             .padding()
+                        // iOS SDK 타겟으로 빌드된 경우
                         #elseif os(iOS)
+                        // Apple Silicon Mac 위에서 iOS 앱을 직접 구동 중인지 런타임에 확인
                         if ProcessInfo.processInfo.isiOSAppOnMac {
                             Text("macOS 화면 캡처가 진행 중입니다.")
                                 .font(.headline)
                                 .foregroundColor(.blue)
                                 .padding()
                         } else {
+                            // iOS 기기 환경인 경우, BroadcastPickerView을 띄워주는 시스템 방송 시작 버튼을 표시
                             BroadcastPickerView()
                                 .frame(width: 60, height: 60)
                         }
+                        // 그 외 타겟 OS 환경용 Fallback 예외 처리
                         #else
-                        Text("macOS 화면 캡처가 진행 중입니다.")
+                        Text("화면 캡처가 진행 중입니다. (Unknown)")
                             .font(.headline)
                             .foregroundColor(.blue)
                             .padding()
@@ -127,7 +130,7 @@ struct ContentView: View {
                             .font(.headline)
                             .foregroundColor(.green)
                     } else {
-                        // ✨ 추가: 방장도 아니고 시청 트랙도 못 받은 상태 (연결 대기)
+                        // 방장도 아니고 시청 트랙도 못 받은 상태 (연결 대기)
                         Text("방송 서버 연결됨. 역할을 대기 중입니다...")
                             .font(.subheadline)
                             .foregroundColor(.gray)
@@ -175,8 +178,7 @@ struct ContentView: View {
                     
                     Button(action: {
                         isInputActive = false
-                        currentSource = nil // 시청자는 로컬 캡처 소스가 없음을 명시
-                        // 캡처 파이프라인을 건너뛰고 서버 연결(Socket)만 시작합니다.
+                        currentSource = nil // 시청자는 로컬 캡처 소스 없음
                         broadcastManager.startConnection(roomID: roomID, mode: clientMode)
                     }) {
                         Text("방송 시청하기")

@@ -12,7 +12,7 @@ class KAUEncoderFactory: NSObject, RTCVideoEncoderFactory {
         super.init()
         allCodecs = defaultFactory.supportedCodecs()
         
-        NSLog("📡 [KAUEncoderFactory] 지원 코덱 목록 (총 \(allCodecs.count)개)")
+        NSLog("[EncoderFactory] 지원 코덱 목록 (총 \(allCodecs.count)개)")
         for (index, codec) in allCodecs.enumerated() {
             NSLog("   \(index + 1). \(codec.name)")
         }

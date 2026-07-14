@@ -39,9 +39,9 @@
 ## 3. 세부 기능 명세 (Detailed Features)
 
 ### 1) 화면 캡처 익스텐션 및 프레임 공유 (Screen Capture Extension & Frame Sharing)
-* **ReplayKit 기반 시스템 캡처**: iOS의 Broadcast Upload Extension(`ScreenShareExt`)을 구현하여 앱 외부의 모든 iOS 시스템 화면을 백그라운드에서 실시간으로 캡처한다.
+* **ReplayKit 기반 시스템 캡처**: iOS의 Broadcast Upload Extension(`ScreenShareExt`)을 구현하여 앱 외부의 모든 iOS 시스템 화면을 백그라운드에서 실시간로 캡처한다.
 * **프로세스 간 프레임 공유 (IPC)**: 메인 앱 프로세스와 익스텐션 프로세스 간의 대용량 비디오 프레임 버퍼 전송을 위해 App Group(공유 컨테이너) 메모리 영역을 통한 공유 및 `KAUBroadcastManager`를 이용한 버퍼 동기화 처리를 수행한다.
-* **해상도 및 화질 고정**: 네트워크 대역폭 하락 시 해상도가 떨어지는 것을 막고 화면의 글자 식별력을 보존하기 위해 `.maintainResolution` 옵션을 기본 비디오 트랙에 바인딩한다.
+* **해상도 고정 옵션**: 네트워크 대역폭 하락 시 해상도가 떨어지는 것을 막기 위해 `.maintainResolution` 옵션을 기본 비디오 트랙에 바인딩한다.
 
 ### 2) 프록시 인코더 구조 (Proxy Encoder Architecture)
 * **KAU 커스텀 인코더 프레임워크**: WebRTC 비디오 엔진의 표준 인코딩 과정을 제어하기 위해 `KAUEncoderFactory`, `KAUProxyEncoder`, `KAUMasterEncoder` 구조를 적용한다.
@@ -84,7 +84,7 @@
 
 ### 📅 2026.06.18
 * **진행 작업**:
-  - **WebRTC 라이브러리 판올림**: WebRTC 프레임워크 최신화 및 비디오 인코더/디코더 처리 속도 최적화. visionOS (`xros`) 아키텍처 지원 대응 포함.
+  - **WebRTC 라이브러리 판올림**: WebRTC 프레임워크 최신화 및 비디오 인코더/디코더 처리 속도 최적화.
   - **인코더 프록시 및 대역폭 조절 로직 고도화**: `KAUProxyEncoder`와 `KAUMasterEncoder` 내부의 코덱 인풋 스케일링 설정 조정.
 
 ### 📅 2026.06.01
@@ -107,22 +107,6 @@
 
 ---
 
-## 5. 성능 및 성능 최적화 기록 (Metrics & Telemetry Logs)
-통계 분석 스크립트(`analyze_stats.js`)로 얻은 핵심 WebRTC 지표 및 리소스 성능 기록.
-
-### 📈 테스트 세션 #1 (YYYY.MM.DD_HHMM)
-* **테스트 환경**: iOS Device ➔ Mac (WiFi)
-* **분석 결과 요약**:
-  * **평균 송출 속도**: `0000 Kbps`
-  * **평균 지연 시간 (RTT)**: `00 ms`
-  * **평균 프레임레이트 (FPS)**: `00 fps`
-  * **평균 CPU / 메모리 사용량**: `00 %` / `00 MB`
-  * **주요 제한 원인 (Quality Limitation)**: `None / Bandwidth / CPU`
-* **비고 / 이슈**: 
-  - 
-
----
-
-## 6. 참고 링크 및 문서
+## 5. 참고 링크 및 문서
 * **시그널링 서버 저장소**: [https://github.com/RoadRoot01/WebRTC_v2](https://github.com/RoadRoot01/WebRTC_v2)
 * **WebRTC iOS 가이드**: [https://webrtc.org/](https://webrtc.org/)

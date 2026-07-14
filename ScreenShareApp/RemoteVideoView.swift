@@ -11,7 +11,7 @@ struct RemoteVideoView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> RTCMTLVideoView {
         let view = RTCMTLVideoView(frame: .zero)
-        view.videoContentMode = .scaleAspectFit // 비율 유지하며 꽉 차게 표시
+        view.videoContentMode = .scaleAspectFit
         view.backgroundColor = .black
         view.delegate = context.coordinator
         return view
@@ -36,7 +36,7 @@ struct RemoteVideoView: UIViewRepresentable {
         }
 
         func videoView(_ videoView: RTCVideoRenderer, didChangeVideoSize size: CGSize) {
-            NSLog("✅ [RemoteVideoView] 첫 프레임 도달 또는 해상도 변경됨: \(size.width) x \(size.height)")
+            NSLog("[RemoteVideoView] First frame received or Resize: \(size.width) x \(size.height)")
         }
     }
 }

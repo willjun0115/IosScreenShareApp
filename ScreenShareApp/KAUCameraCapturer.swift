@@ -2,8 +2,6 @@
 //  KAUCameraCapturer.swift
 //  ScreenShareApp
 //
-//  Created by supercoder on 5/6/26.
-//
 
 import AVFoundation
 import WebRTC
