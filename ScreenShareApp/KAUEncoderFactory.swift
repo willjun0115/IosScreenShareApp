@@ -26,7 +26,13 @@ class KAUEncoderFactory: NSObject, RTCVideoEncoderFactory {
     }
     
     func createEncoder(_ info: RTCVideoCodecInfo) -> RTCVideoEncoder? {
-        // 코덱 메타데이터만 프록시로 전달하고 생성 위임
-        return KAUProxyEncoder(info: info)
+        if info.name.lowercased() == "h264" {
+            // H264 하드웨어 인코더는 자원 제한이 있으므로 프록시/마스터 공유 구조 사용
+            return KAUProxyEncoder(info: info)
+        } else {
+            // VP8, VP9 등 소프트웨어 코덱은 C++ 래퍼 제약이 있고 자원 제한이 없으므로 기본 인코더를 직접 생성해 리턴
+            NSLog("🛠️ [EncoderFactory] 소프트웨어 코덱 기본 인코더 직접 생성 (Codec: \(info.name))")
+            return defaultFactory.createEncoder(info)
+        }
     }
 }
