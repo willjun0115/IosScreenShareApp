@@ -26,6 +26,8 @@ class KAUMasterEncoder {
         NSLog("🔗 [Multiplexer] 콜백 연결 (Key: \(key), 프록시: \(id.prefix(4)), 현재 뷰어: \(count)명)")
     }
     
+    private var callbackCount: [String: Int] = [:]
+    
     // 실제 엔진 생성 시점을 startEncode 내부로 이동시켜 해상도 기반으로 격리 생성
     func startEncode(key: String, info: RTCVideoCodecInfo, settings: RTCVideoEncoderSettings, numberOfCores: Int32) -> Int {
         stateLock.lock()
@@ -45,8 +47,14 @@ class KAUMasterEncoder {
                 guard let self = self else { return false }
                 
                 self.stateLock.lock()
+                self.callbackCount[key] = (self.callbackCount[key] ?? 0) + 1
+                let count = self.callbackCount[key] ?? 0
                 let currentCallbacks = Array((self.callbacks[key] ?? [:]).values)
                 self.stateLock.unlock()
+                
+                if count % 60 == 0 {
+                    NSLog("📡 [Multiplexer] 인코더 콜백 실행됨: \(count)번째 프레임 완료 (Key: \(key), 등록된 프록시 콜백 수: \(currentCallbacks.count))")
+                }
                 
                 for cb in currentCallbacks {
                     _ = cb(encodedImage, codecInfo)
