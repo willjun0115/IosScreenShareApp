@@ -6,7 +6,7 @@ class KAUEncoderFactory: NSObject, RTCVideoEncoderFactory {
     private var allCodecs: [RTCVideoCodecInfo] = []
     
     // 우선 사용할 코덱 이름 (예: "vp8", "h264")
-    private let preferredCodecName = "h264"
+    private let preferredCodecName = "vp8"
 
     override init() {
         super.init()
