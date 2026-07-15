@@ -28,13 +28,13 @@ class WebRTCManager: NSObject {
     let currentMode: RTCClientMode
     private var statsTimer: Timer?
     
-    init(socket: SocketIOClient, mode: RTCClientMode = .broadcasterAsOfferer) {
+    init(socket: SocketIOClient, mode: RTCClientMode = .broadcasterAsOfferer, preferredCodec: String = "H264") {
         self.socket = socket
         self.currentMode = mode
         RTCInitializeSSL()
         
         // let videoEncoderFactory = RTCDefaultVideoEncoderFactory()
-        let videoEncoderFactory = KAUEncoderFactory()
+        let videoEncoderFactory = KAUEncoderFactory(preferredCodec: preferredCodec)
         let videoDecoderFactory = RTCDefaultVideoDecoderFactory()
 
 //        let info = videoEncoderFactory.supportedCodecs()

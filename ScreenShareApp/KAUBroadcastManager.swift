@@ -35,11 +35,11 @@ class KAUBroadcastManager: ObservableObject {
     @Published var isConnected = false
     @Published var remoteVideoTrack: RTCVideoTrack?
     
-    func startStreaming(source: captureSource, roomID: String, mode: RTCClientMode = .broadcasterAsOfferer) {
+    func startStreaming(source: captureSource, roomID: String, mode: RTCClientMode = .broadcasterAsOfferer, preferredCodec: String = "H264") {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
             
-            startConnection(roomID: roomID, mode: mode)
+            startConnection(roomID: roomID, mode: mode, preferredCodec: preferredCodec)
             
             guard let rtc = rtcManager else { return }
             
@@ -88,7 +88,7 @@ class KAUBroadcastManager: ObservableObject {
         }
     }
     
-    func startConnection(roomID: String, mode: RTCClientMode = .broadcasterAsOfferer) {
+    func startConnection(roomID: String, mode: RTCClientMode = .broadcasterAsOfferer, preferredCodec: String = "H264") {
         let serverURL = URL(string: "https://192.168.1.62:8000")!
         socketManager = SocketManager(socketURL: serverURL, config: [
             .log(false),
@@ -100,7 +100,7 @@ class KAUBroadcastManager: ObservableObject {
         socket = socketManager?.defaultSocket
         BackgroundAudioPlayer.shared.start()
         
-        rtcManager = WebRTCManager(socket: socket!, mode: mode)
+        rtcManager = WebRTCManager(socket: socket!, mode: mode, preferredCodec: preferredCodec)
         
         rtcManager?.onRemoteVideoTrackReceived = { [weak self] track in
             self?.remoteVideoTrack = track

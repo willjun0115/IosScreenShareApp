@@ -15,6 +15,7 @@ struct ContentView: View {
     // 현재 선택된 공유 모드를 추적하는 상태 변수
     @State private var currentSource: captureSource? = nil
     @State private var clientMode: RTCClientMode = .broadcasterAsOfferer
+    @State private var selectedCodec: String = "H264"
 
     var body: some View {
         VStack(spacing: 40) {
@@ -53,6 +54,32 @@ struct ContentView: View {
                                 .foregroundColor(clientMode == mode ? .white : .primary)
                                 .frame(maxWidth: .infinity, minHeight: 44)
                                 .background(clientMode == mode ? Color.blue : Color(UIColor.systemGray5))
+                        }
+                        .disabled(broadcastManager.isConnected)
+                    }
+                }
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color(UIColor.systemGray4), lineWidth: 1)
+                )
+                
+                Text("선호 코덱")
+                    .font(.headline)
+                    .foregroundColor(.gray)
+                    .padding(.top, 10)
+                
+                HStack(spacing: 0) {
+                    ForEach(["H264", "VP8", "VP9", "AV1"], id: \.self) { codec in
+                        Button(action: {
+                            selectedCodec = codec
+                        }) {
+                            Text(codec)
+                                .font(.system(size: 13, weight: .semibold))
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(selectedCodec == codec ? .white : .primary)
+                                .frame(maxWidth: .infinity, minHeight: 44)
+                                .background(selectedCodec == codec ? Color.blue : Color(UIColor.systemGray5))
                         }
                         .disabled(broadcastManager.isConnected)
                     }
@@ -153,7 +180,7 @@ struct ContentView: View {
                     Button(action: {
                         isInputActive = false
                         currentSource = .screen
-                        broadcastManager.startStreaming(source: .screen, roomID: roomID, mode: clientMode)
+                        broadcastManager.startStreaming(source: .screen, roomID: roomID, mode: clientMode, preferredCodec: selectedCodec)
                     }) {
                         Text("화면 공유 시작")
                             .foregroundColor(.white)
@@ -166,7 +193,7 @@ struct ContentView: View {
                     Button(action: {
                         isInputActive = false
                         currentSource = .camera
-                        broadcastManager.startStreaming(source: .camera, roomID: roomID, mode: clientMode)
+                        broadcastManager.startStreaming(source: .camera, roomID: roomID, mode: clientMode, preferredCodec: selectedCodec)
                     }) {
                         Text("카메라 공유 시작")
                             .foregroundColor(.white)
@@ -179,7 +206,7 @@ struct ContentView: View {
                     Button(action: {
                         isInputActive = false
                         currentSource = nil // 시청자는 로컬 캡처 소스 없음
-                        broadcastManager.startConnection(roomID: roomID, mode: clientMode)
+                        broadcastManager.startConnection(roomID: roomID, mode: clientMode, preferredCodec: selectedCodec)
                     }) {
                         Text("방송 시청하기")
                             .foregroundColor(.white)
