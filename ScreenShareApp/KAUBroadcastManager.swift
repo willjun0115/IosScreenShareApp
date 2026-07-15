@@ -108,7 +108,7 @@ class KAUBroadcastManager: ObservableObject {
         
         socket?.on(clientEvent: .connect) { [weak self] _, _ in
             NSLog("✅ 서버 연결 성공 (Room: \(roomID))")
-            self?.socket?.emit("join", ["room": roomID, "type": "broadcast"])
+            self?.socket?.emit("join", ["room": roomID, "type": "broadcast", "mode": mode.rawValue])
             DispatchQueue.main.async {
                 self?.isConnected = true
             }
