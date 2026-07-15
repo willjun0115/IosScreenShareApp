@@ -31,8 +31,13 @@ class KAUMasterEncoder {
         stateLock.lock()
         
         if realEncoders[key] == nil {
-            NSLog("🛠️ [Multiplexer] 새 공유 인코더 생성 (Key: \(key))")
+            NSLog("🛠️ [Multiplexer] 새 공유 인코더 생성 시도 (Key: \(key), Codec: \(info.name))")
             let encoder = RTCDefaultVideoEncoderFactory().createEncoder(info)
+            if encoder == nil {
+                NSLog("❌ [Multiplexer] 공유 인코더 생성 실패 (Key: \(key))")
+            } else {
+                NSLog("✅ [Multiplexer] 공유 인코더 생성 성공 (Key: \(key))")
+            }
             realEncoders[key] = encoder
             isEngineStarted[key] = false
             
@@ -58,8 +63,9 @@ class KAUMasterEncoder {
             isEngineStarted[key] = true
             stateLock.unlock()
             
-            NSLog("🚀 [Multiplexer] 공유 인코더 엔진 최초 가동 완료 (Key: \(key))")
-            return Int(encoder?.startEncode(with: settings, numberOfCores: numberOfCores) ?? -1)
+            let result = Int(encoder?.startEncode(with: settings, numberOfCores: numberOfCores) ?? -1)
+            NSLog("🚀 [Multiplexer] 공유 인코더 엔진 최초 가동 결과: \(result) (Key: \(key))")
+            return result
         } else {
             stateLock.unlock()
             // 두 번째 접속자 부터는 공유 인코더를 재가동하지 않고 0을 반환
@@ -94,7 +100,11 @@ class KAUMasterEncoder {
         let encoder = realEncoders[key]
         stateLock.unlock()
         
-        return Int(encoder?.encode(frame, codecSpecificInfo: info, frameTypes: modifiedFrameTypes) ?? -1)
+        let result = Int(encoder?.encode(frame, codecSpecificInfo: info, frameTypes: modifiedFrameTypes) ?? -1)
+        if result != 0 {
+            NSLog("❌ [Multiplexer] 프레임 인코딩 실패! 결과코드: \(result) (Key: \(key))")
+        }
+        return result
     }
     
     func releaseProxy(key: String, id: String) -> Int {
