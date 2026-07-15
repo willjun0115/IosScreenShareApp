@@ -73,6 +73,8 @@ class KAUMasterEncoder {
         }
     }
     
+    private var encodeCount: [String: Int] = [:]
+    
     func encode(key: String, frame: RTCVideoFrame, info: RTCCodecSpecificInfo?, frameTypes: [NSNumber]) -> Int {
         stateLock.lock()
         
@@ -103,6 +105,14 @@ class KAUMasterEncoder {
         let result = Int(encoder?.encode(frame, codecSpecificInfo: info, frameTypes: modifiedFrameTypes) ?? -1)
         if result != 0 {
             NSLog("❌ [Multiplexer] 프레임 인코딩 실패! 결과코드: \(result) (Key: \(key))")
+        } else {
+            stateLock.lock()
+            encodeCount[key] = (encodeCount[key] ?? 0) + 1
+            let count = encodeCount[key] ?? 0
+            stateLock.unlock()
+            if count % 60 == 0 {
+                NSLog("📹 [Multiplexer] 프레임 인코딩 진행 중: \(count)번째 프레임 완료 (Key: \(key))")
+            }
         }
         return result
     }
