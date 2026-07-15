@@ -31,7 +31,7 @@ class KAUEncoderFactory: NSObject, RTCVideoEncoderFactory {
             return KAUProxyEncoder(info: info)
         } else {
             // VP8, VP9 등 소프트웨어 코덱은 C++ 래퍼 제약이 있고 자원 제한이 없으므로 기본 인코더를 직접 생성해 리턴
-            NSLog("🛠️ [EncoderFactory] 소프트웨어 코덱 기본 인코더 직접 생성 (Codec: \(info.name))")
+            NSLog("[EncoderFactory] 소프트웨어 코덱 기본 인코더 직접 생성 (Codec: \(info.name))")
             return defaultFactory.createEncoder(info)
         }
     }
