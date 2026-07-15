@@ -52,7 +52,6 @@ class KAUMasterEncoder {
         
         let encoder = realEncoders[key]
         let alreadyStarted = isEngineStarted[key] ?? false
-        stateLock.unlock()
         
         // 처음 연결된 뷰어(프록시)일 때만 실제 하드웨어 엔진을 가동
         if !alreadyStarted {

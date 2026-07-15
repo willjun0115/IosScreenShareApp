@@ -235,7 +235,7 @@ class WebRTCManager: NSObject {
         
         let candidate = RTCIceCandidate(
             sdp: candidateDict["candidate"] as? String ?? "",
-            sdpMLineIndex: Int32(candidateDict["sdpMLineIndex"] as? Int ?? 0),
+            sdpMLineIndex: Int32((candidateDict["sdpMLineIndex"] as? NSNumber)?.int32Value ?? 0),
             sdpMid: candidateDict["sdpMid"] as? String
         )
         pc.add(candidate)
@@ -317,37 +317,39 @@ extension WebRTCManager {
 // MARK: - RTCPeerConnectionDelegate
 extension WebRTCManager: RTCPeerConnectionDelegate {
     func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
-        guard let peerId = peerConnections.first(where: { $0.value == peerConnection })?.key else { return }
-        
-        NSLog("📤 [WebRTC] ICE Candidate created: \(candidate.sdp) (to: \(peerId))")
-        
-        let candidateDict: [String: Any] = [
-            "sdpMLineIndex": candidate.sdpMLineIndex,
-            "sdpMid": candidate.sdpMid ?? "",
-            "candidate": candidate.sdp
-        ]
-        
-        let payload: [String: Any] = [
-            "to": peerId,
-            "data": [
-                "type": "candidate",
-                "candidate": candidateDict
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            guard let peerId = self.peerConnections.first(where: { $0.value == peerConnection })?.key else { return }
+            
+            NSLog("📤 [WebRTC] ICE Candidate created: \(candidate.sdp) (to: \(peerId))")
+            
+            let candidateDict: [String: Any] = [
+                "sdpMLineIndex": candidate.sdpMLineIndex,
+                "sdpMid": candidate.sdpMid ?? "",
+                "candidate": candidate.sdp
             ]
-        ]
-        
-        socket.emit("candidate", payload)
+            
+            let payload: [String: Any] = [
+                "to": peerId,
+                "data": [
+                    "type": "candidate",
+                    "candidate": candidateDict
+                ]
+            ]
+            
+            self.socket.emit("candidate", payload)
+        }
     }
     
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
-        guard let peerId = peerConnections.first(where: { $0.value == peerConnection })?.key else { return }
-        
-        NSLog("ℹ️ [\(peerId)] ICE Connection State: \(newState.rawValue)")
-        
-        // 연결이 완전히 끊기면 메모리(딕셔너리)에서 정리
-        if newState == .disconnected || newState == .failed || newState == .closed {
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            guard let peerId = self.peerConnections.first(where: { $0.value == peerConnection })?.key else { return }
+            
+            NSLog("ℹ️ [\(peerId)] ICE Connection State: \(newState.rawValue)")
+            
+            // 연결이 완전히 끊기면 메모리(딕셔너리)에서 정리
+            if newState == .disconnected || newState == .failed || newState == .closed {
                 peerConnection.close()
                 self.peerConnections.removeValue(forKey: peerId)
                 NSLog("⚠️ [\(peerId)] Disconnected. PC deleted from main thread.")
@@ -589,7 +591,7 @@ class SystemResourceMonitor {
         }
         
         // Free thread list memory
-        vm_deallocate(mach_task_self_, vm_address_t(Int(bitPattern: threadList)), vm_size_t(threadCount * mach_msg_type_number_t(MemoryLayout<thread_t>.size)))
+        vm_deallocate(mach_task_self_, vm_address_t(bitPattern: threads), vm_size_t(threadCount * mach_msg_type_number_t(MemoryLayout<thread_t>.size)))
         
         return totalCPU
     }
