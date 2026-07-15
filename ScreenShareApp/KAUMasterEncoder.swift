@@ -4,7 +4,7 @@ import WebRTC
 class KAUMasterEncoder {
     static let shared = KAUMasterEncoder()
     
-    // Key 포맷: "코덱_가로x세로"
+    // Key 포맷: "코덱 이름" (예: h264, vp8)
     private var realEncoders: [String: RTCVideoEncoder] = [:]
     private var callbacks: [String: [String: RTCVideoEncoderCallback]] = [:]
     private var isEngineStarted: [String: Bool] = [:]

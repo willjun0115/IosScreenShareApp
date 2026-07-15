@@ -16,6 +16,7 @@ class KAUBroadcastManager: ObservableObject {
     static let shared = KAUBroadcastManager()
     private let cameraCapturer = KAUCameraCapturer()
     
+    // 컴파일 타임 분기
     #if canImport(ScreenCaptureKit)
     private var _macCapturer: Any?
     @available(macOS 12.3, iOS 18.0, macCatalyst 18.2, *)

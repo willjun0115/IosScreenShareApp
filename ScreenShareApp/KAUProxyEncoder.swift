@@ -41,7 +41,7 @@ class KAUProxyEncoder: NSObject, RTCVideoEncoder {
     }
     
     func startEncode(with settings: RTCVideoEncoderSettings, numberOfCores: Int32) -> Int {
-        let key = "\(codecInfo.name.lowercased())_master"
+        let key = codecInfo.name.lowercased()
         self.activeEncoderKey = key
         
         // 대기 중이던 콜백을 마스터에 등록
