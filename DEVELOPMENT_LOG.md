@@ -65,9 +65,8 @@
 
 ### 📅 2026.07.15
 * **진행 작업**:
-  - **시그널링 Glare 에러 해결**: 수신자 오퍼(Viewer as Offerer) 모드 접속 시 웹 브라우저에서 발생하던 런타임 크래시(`Called in wrong state: stable`)를 해결. iOS 클라이언트가 시그널링 서버 접속 시 본인의 `mode`를 전달하도록 구현하고, 서버(`server.js`)는 수신자 오퍼 모드일 때 송신자에게 `new-child` 이벤트를 중복 발행하지 않도록 제한. 웹 클라이언트(`App.tsx`)에는 이미 커넥션이 활성화된 경우 중복 Offer 유입을 무시하는 방어 코드(Defensive Guard) 적용.
-  - **선호 코덱 선택 UI 및 연동**: iOS 앱 설정 화면(`ContentView.swift`)에서 `H264`, `VP8`, `VP9`, `AV1` 중 선호 코덱을 버튼으로 선택할 수 있도록 UI를 구축하고, 선택된 코덱 파라미터를 `WebRTCManager` -> `KAUEncoderFactory`까지 전파하도록 개선.
-  - **소프트웨어 코덱(VP8/VP9) 프록시 우회 처리**: WebRTC iOS SDK의 VP8/VP9 소프트웨어 인코더(C++ 기반 `RTCWrappedNativeVideoEncoder`)는 Swift/ObjC에서 수동으로 `setCallback`을 호출하여 인코딩 루프를 실행할 경우, 원격 비디오 렌더링에 필요한 결과 패킷 콜백을 방출하지 못하는 구조적 제약이 있음. 이를 극복하고자 `KAUEncoderFactory`에서 소프트웨어 코덱(H.264 제외)에 한해 커스텀 프록시(`KAUProxyEncoder`) 처리를 우회하고 SDK 기본 소프트웨어 인코더를 직접 리턴하도록 설계를 개선하여 정상 송수신 지원 완료.
+  - **선호 코덱 선택 UI 및 연동**: iOS 앱 설정 화면(`ContentView.swift`)에서 `H264`, `VP8`, `VP9`, `AV1` 중 선호 코덱을 버튼으로 선택할 수 있도록 UI를 추가하고, 선택된 코덱 파라미터를 `WebRTCManager` -> `KAUEncoderFactory`까지 전파하도록 개선.
+  - **소프트웨어 코덱 프록시 우회 처리**: WebRTC iOS SDK의 VP8/VP9 소프트웨어 인코더(C++ 기반 `RTCWrappedNativeVideoEncoder`)는 Swift/ObjC에서 수동으로 `setCallback`을 호출하여 인코딩 루프를 실행할 경우, 원격 비디오 렌더링에 필요한 결과 패킷 콜백을 방출하지 못하는 구조적 제약이 있음. 따라서 `KAUEncoderFactory`에서 H.264 이외의 소프트웨어 코덱에 한해 SDK 기본 소프트웨어 인코더를 직접 리턴하도록 설계를 개선.
 
 ### 📅 2026.07.06
 * **진행 작업**:
